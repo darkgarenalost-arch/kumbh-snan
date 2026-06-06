@@ -940,7 +940,13 @@ footer{background:var(--dk2);border-top:1px solid var(--gold-bdr);padding:3rem 0
 =========================================== -->
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
-const CFG = { WA_NUM: '918275872736', BUSINESS: 'Kumbh Snan', EMAIL: 'info@kumbhsnan.com', RAZORPAY_KEY: 'rzp_test_SkrMk3QzxEwhXD' };
+const CFG = {
+  WA_NUM: '918275872736',
+  BUSINESS: 'Kumbh Snan',
+  EMAIL: 'info@kumbhsnan.com',
+  RAZORPAY_KEY: 'rzp_test_SkrMk3QzxEwhXD',
+  GOOGLE_SHEETS_WEB_APP_URL: 'https://script.google.com/macros/s/AKfycbwyLIanPBz96qaULFq68LUuNGPdXDG3bjYOAYefAnXm2BiQx-cadEGRKAYI9w00yXvC/exec'
+};
 const WA = 'https://wa.me/' + CFG.WA_NUM;
 
 /* ===== LOADER ===== */
@@ -1054,9 +1060,30 @@ function submitBooking() {
       message: msg || 'No special requests.'
     },
     theme: { color: '#c9a84c' },
-    handler: function (response) {
+    handler: async function (response) {
+      const paymentId = response.razorpay_payment_id || '';
+      const bookingPayload = buildBookingPayload({
+        name,
+        gotra,
+        phone,
+        email,
+        plan,
+        country,
+        msg,
+        paymentId,
+        amount
+      });
+
+      try {
+        // Save the booking only after Razorpay confirms successful payment.
+        await saveBookingToGoogleSheets(bookingPayload);
+      } catch (error) {
+        // A Sheets failure must not block the paid customer from seeing success.
+        console.error('Google Sheets booking save failed:', error);
+      }
+
       document.getElementById('tyMsg').textContent =
-        `Thank you, ${name}! Your payment has been received. Payment ID: ${response.razorpay_payment_id}. Our team will confirm your slot and guide you through the next steps on WhatsApp.`;
+        `Thank you, ${name}! Your payment has been received. Payment ID: ${paymentId}. Our team will confirm your slot and guide you through the next steps on WhatsApp.`;
       nav('thankyou');
     },
     modal: {
@@ -1075,6 +1102,54 @@ function getPlanAmount(plan) {
   if (p.includes('parivar')) return 1001;
   if (p.includes('sampoorna')) return 2101;
   return 0;
+}
+
+function buildBookingPayload(data) {
+  // Builds the exact row data expected by the Google Apps Script backend.
+  return {
+    timestamp: new Date().toISOString(),
+    name: sheetSafe(data.name, 120),
+    gotra: sheetSafe(data.gotra || 'Not provided', 120),
+    phone: sheetSafe(data.phone, 50),
+    email: sheetSafe(data.email, 180),
+    packageName: sheetSafe(data.plan, 180),
+    country: sheetSafe(data.country || 'Not provided', 180),
+    message: sheetSafe(data.msg || 'No special requests.', 1000),
+    paymentId: sheetSafe(data.paymentId, 120),
+    status: 'Paid',
+    amount: data.amount
+  };
+}
+
+async function saveBookingToGoogleSheets(payload) {
+  // The Apps Script Web App URL is created after deployment and must be pasted into CFG.
+  if (!CFG.GOOGLE_SHEETS_WEB_APP_URL) {
+    throw new Error('Google Sheets Web App URL is not configured.');
+  }
+
+  const res = await fetch(CFG.GOOGLE_SHEETS_WEB_APP_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify(payload)
+  });
+
+  const data = await res.json().catch(() => null);
+
+  if (!res.ok || !data || data.success !== true) {
+    throw new Error(data?.error || `Google Sheets request failed with status ${res.status}`);
+  }
+
+  return data;
+}
+
+function sheetSafe(value, maxLength) {
+  // Strips control characters and angle brackets before sending user input to Sheets.
+  return String(value || '')
+    .replace(/[\u0000-\u001F\u007F]/g, ' ')
+    .replace(/[<>]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, maxLength);
 }
 
 /* ===== CONTACT FORM → WHATSAPP ===== */
