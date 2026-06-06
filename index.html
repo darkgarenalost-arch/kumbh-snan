@@ -722,9 +722,9 @@ footer{background:var(--dk2);border-top:1px solid var(--gold-bdr);padding:3rem 0
           <div class="reveal">
             <div class="badge">What Happens Next</div>
             <h2 style="font-family:var(--serif);font-size:2rem;margin-bottom:.9rem">Your Journey to <span style="color:var(--gold)">Divine Blessings</span></h2>
-            <p style="color:var(--gl);margin-bottom:2rem;font-size:.95rem">After submitting, our team will guide you through each step.</p>
-            <div class="bk-step"><div class="bk-snum">1</div><div class="bk-stxt"><h4>Submit This Form</h4><p>Fill in your details. No payment yet — we confirm first.</p></div></div>
-            <div class="bk-step"><div class="bk-snum">2</div><div class="bk-stxt"><h4>We Confirm &amp; Send Payment Link</h4><p>Team confirms your slot and sends a secure Razorpay link via WhatsApp.</p></div></div>
+            <p style="color:var(--gl);margin-bottom:2rem;font-size:.95rem">After payment, our team will guide you through each step.</p>
+            <div class="bk-step"><div class="bk-snum">1</div><div class="bk-stxt"><h4>Fill Details &amp; Pay</h4><p>Fill in your details and complete secure payment through Razorpay.</p></div></div>
+            <div class="bk-step"><div class="bk-snum">2</div><div class="bk-stxt"><h4>We Confirm Your Slot</h4><p>Team confirms your slot and booking details via WhatsApp.</p></div></div>
             <div class="bk-step"><div class="bk-snum">3</div><div class="bk-stxt"><h4>Send Your Photo(s)</h4><p>After payment, send your photo via WhatsApp with your booking reference.</p></div></div>
             <div class="bk-step"><div class="bk-snum">4</div><div class="bk-stxt"><h4>Receive Your Video</h4><p>On the scheduled date we perform your sacred Snan and send you the video proof.</p></div></div>
             <div class="card" style="margin-top:2rem;background:linear-gradient(135deg,#1c1000,var(--dk3))">
@@ -761,8 +761,8 @@ footer{background:var(--dk2);border-top:1px solid var(--gold-bdr);padding:3rem 0
               </div>
               <div class="fg"><label class="fl">Country / City</label><input type="text" class="fi" id="bCountry" placeholder="e.g. London, UK or Mumbai, India"></div>
               <div class="fg"><label class="fl">Special Requests / Message</label><textarea class="ft fi" id="bMsg" placeholder="Names of family members, ancestor prayers, special requests..."></textarea></div>
-              <button class="fsub" onclick="submitBooking()">🕉 Submit Booking Request</button>
-              <p class="fnote">✅ No payment required now. We send the payment link after confirming your slot.</p>
+              <button class="fsub" onclick="submitBooking()">🕉 Pay Securely with Razorpay</button>
+              <p class="fnote">✅ Secure payment powered by Razorpay.</p>
             </div>
           </div>
         </div>
@@ -917,12 +917,12 @@ footer{background:var(--dk2);border-top:1px solid var(--gold-bdr);padding:3rem 0
     <div class="ty-inner">
       <div class="ty-ico">🙏</div>
       <h1 class="ty-title">Jai Shri Ram! 🕉</h1>
-      <p id="tyMsg" class="ty-sub">Your booking request has been received. Our team will contact you on WhatsApp within 2 hours to confirm your slot and send the payment link.</p>
+      <p id="tyMsg" class="ty-sub">Your payment has been received. Our team will contact you on WhatsApp within 2 hours to confirm your slot and guide you through the next steps.</p>
       <div class="nsteps">
         <h3>📋 Your Next Steps</h3>
         <div class="ns"><div class="ns-num">1</div><div class="ns-txt"><strong>Save Our WhatsApp Number</strong><br>Save +91 82758 72736 to your contacts as "Kumbh Snan"</div></div>
         <div class="ns"><div class="ns-num">2</div><div class="ns-txt"><strong>Wait for Our Confirmation</strong><br>We'll WhatsApp you within 2 hours with your booking details and slot confirmation</div></div>
-        <div class="ns"><div class="ns-num">3</div><div class="ns-txt"><strong>Complete Payment &amp; Send Photo</strong><br>Pay via the secure link we send, then WhatsApp us your clear photo</div></div>
+        <div class="ns"><div class="ns-num">3</div><div class="ns-txt"><strong>Send Your Photo</strong><br>WhatsApp us your clear photo with your booking reference</div></div>
         <div class="ns"><div class="ns-num">4</div><div class="ns-txt"><strong>Receive Your Video Proof</strong><br>On the sacred date, we perform your Snan and send you the video on WhatsApp</div></div>
       </div>
       <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
@@ -938,8 +938,9 @@ footer{background:var(--dk2);border-top:1px solid var(--gold-bdr);padding:3rem 0
 <!-- ===========================================
      JAVASCRIPT
 =========================================== -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
-const CFG = { WA_NUM: '918275872736', BUSINESS: 'Kumbh Snan', EMAIL: 'info@kumbhsnan.com' };
+const CFG = { WA_NUM: '918275872736', BUSINESS: 'Kumbh Snan', EMAIL: 'info@kumbhsnan.com', RAZORPAY_KEY: 'rzp_test_SkrMk3QzxEwhXD' };
 const WA = 'https://wa.me/' + CFG.WA_NUM;
 
 /* ===== LOADER ===== */
@@ -1016,7 +1017,7 @@ function toggleFaq(btn) {
   if (!isOpen) { btn.classList.add('open'); ans.classList.add('open'); }
 }
 
-/* ===== BOOKING FORM → WHATSAPP ===== */
+/* ===== BOOKING FORM -> RAZORPAY ===== */
 function submitBooking() {
   const name    = g('bName');
   const gotra   = g('bGotra');
@@ -1031,29 +1032,49 @@ function submitBooking() {
   if (!email || !validEmail(email)) { showToast('Please enter a valid email address.', 'err'); return; }
   if (!plan)  { showToast('Please select a package.', 'err'); return; }
 
-  const waText =
-`🕉 New Kumbh Snan Booking 🕉
+  const amount = getPlanAmount(plan);
+  if (!amount) { showToast('Please select a valid package.', 'err'); return; }
+  if (typeof Razorpay === 'undefined') {
+    showToast('Payment gateway is loading. Please try again in a moment.', 'err');
+    return;
+  }
 
-👤 Name: ${name}
-🔱 Gotra: ${gotra || 'Not provided'}
-📞 Phone: ${phone}
-📧 Email: ${email}
-🌍 Location: ${country || 'Not provided'}
-📦 Package: ${plan}
+  const rz = new Razorpay({
+    key: CFG.RAZORPAY_KEY,
+    amount: amount * 100,
+    currency: 'INR',
+    name: CFG.BUSINESS,
+    description: plan,
+    image: 'favicon.png',
+    prefill: { name, email, contact: phone },
+    notes: {
+      gotra: gotra || 'Not provided',
+      country: country || 'Not provided',
+      package: plan,
+      message: msg || 'No special requests.'
+    },
+    theme: { color: '#c9a84c' },
+    handler: function (response) {
+      document.getElementById('tyMsg').textContent =
+        `Thank you, ${name}! Your payment has been received. Payment ID: ${response.razorpay_payment_id}. Our team will confirm your slot and guide you through the next steps on WhatsApp.`;
+      nav('thankyou');
+    },
+    modal: {
+      ondismiss: function () {
+        showToast('Payment was cancelled. You can try again when ready.', 'err');
+      }
+    }
+  });
 
-💬 Message:
-${msg || 'No special requests.'}
+  rz.open();
+}
 
-—
-Sent from KumbhSnan.com`;
-
-  showToast('Redirecting to WhatsApp to complete your booking... 🙏', 'ok');
-  setTimeout(() => {
-    window.open(WA + '?text=' + encodeURIComponent(waText), '_blank');
-    document.getElementById('tyMsg').textContent =
-      `Thank you, ${name}! Your booking details have been sent to our team on WhatsApp. We will confirm your slot and send the payment link within 2 hours.`;
-    nav('thankyou');
-  }, 900);
+function getPlanAmount(plan) {
+  const p = (plan || '').toLowerCase();
+  if (p.includes('vyaktigat')) return 501;
+  if (p.includes('parivar')) return 1001;
+  if (p.includes('sampoorna')) return 2101;
+  return 0;
 }
 
 /* ===== CONTACT FORM → WHATSAPP ===== */
