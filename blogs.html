@@ -26,11 +26,11 @@ src="https://www.facebook.com/tr?id=689667723047867&ev=PageView&noscript=1"
 <meta name="keywords" content="online kumbh snan, digital kumbh snan, maha kumbh nashik 2027, kumbh snan booking, virtual kumbh snan, kumbh mela online ritual, NRI kumbh snan">
 <meta name="robots" content="index, follow, max-image-preview:large">
 <meta name="author" content="Kumbh Snan">
-<link rel="canonical" id="canonical" href="https://kumbh-snan.com/blog">
+<link rel="canonical" id="canonical" href="https://kumbh-snan.com/blogs">
 <link rel="icon" type="image/png" href="favicon.png">
 <!-- ═══ Open Graph ═══ -->
 <meta property="og:type" content="website" id="ogType">
-<meta property="og:url" id="ogUrl" content="https://kumbh-snan.com/blog">
+<meta property="og:url" id="ogUrl" content="https://kumbh-snan.com/blogs">
 <meta property="og:title" id="ogTitle" content="Kumbh Snan Blog | Digital Kumbh Snan Guide & Nashik 2027">
 <meta property="og:description" id="ogDesc" content="Expert articles on Digital Kumbh Snan, Maha Kumbh Nashik 2027, and online booking for NRIs worldwide.">
 <meta property="og:image" content="https://kumbh-snan.com/og-image.jpg">
@@ -43,7 +43,7 @@ src="https://www.facebook.com/tr?id=689667723047867&ev=PageView&noscript=1"
 <meta name="twitter:description" id="twDesc" content="Expert articles on Digital Kumbh Snan and Maha Kumbh Nashik 2027.">
 <!-- ═══ Schema: WebSite ═══ -->
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"WebSite","name":"Kumbh Snan","url":"https://kumbh-snan.com","description":"Digital Kumbh Snan booking service for Maha Kumbh Nashik 2027","potentialAction":{"@type":"SearchAction","target":"https://kumbh-snan.com/blog?q={search_term_string}","query-input":"required name=search_term_string"}}
+{"@context":"https://schema.org","@type":"WebSite","name":"Kumbh Snan","url":"https://kumbh-snan.com","description":"Digital Kumbh Snan booking service for Maha Kumbh Nashik 2027","potentialAction":{"@type":"SearchAction","target":"https://kumbh-snan.com/blogs?q={search_term_string}","query-input":"required name=search_term_string"}}
 </script>
 <!-- ═══ Schema: Organization ═══ -->
 <script type="application/ld+json">
@@ -51,7 +51,7 @@ src="https://www.facebook.com/tr?id=689667723047867&ev=PageView&noscript=1"
 </script>
 <!-- ═══ Schema: Blog ═══ -->
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"Blog","name":"Kumbh Snan Blog","description":"Expert articles on Digital Kumbh Snan, Maha Kumbh Nashik 2027, and online spiritual rituals","url":"https://kumbh-snan.com/blog","publisher":{"@type":"Organization","name":"Kumbh Snan","logo":{"@type":"ImageObject","url":"https://kumbh-snan.com/logo.png"}}}
+{"@context":"https://schema.org","@type":"Blog","name":"Kumbh Snan Blog","description":"Expert articles on Digital Kumbh Snan, Maha Kumbh Nashik 2027, and online spiritual rituals","url":"https://kumbh-snan.com/blogs","publisher":{"@type":"Organization","name":"Kumbh Snan","logo":{"@type":"ImageObject","url":"https://kumbh-snan.com/favicon.png"}}}
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1049,7 +1049,7 @@ function showListing() {
   updateMeta({
     title:'Kumbh Snan Blog | Digital Kumbh Snan Guide & Nashik 2027 Articles',
     desc:'Read expert articles on Digital Kumbh Snan, Maha Kumbh Nashik 2027 dates, online ritual booking for NRIs, and the spiritual significance of Kumbh Snan.',
-    url:'https://kumbh-snan.com/blog',
+    url:'https://kumbh-snan.com/blogs',
     type:'website'
   });
 }
@@ -1067,8 +1067,8 @@ function openArticle(idx) {
     "author":{"@type":"Organization","name":"Kumbh Snan"},
     "publisher":{"@type":"Organization","name":"Kumbh Snan","logo":{"@type":"ImageObject","url":"https://kumbh-snan.com/favicon.png"}},
     "datePublished": a.date,
-    "url": `https://kumbh-snan.com/blog/${a.id}`,
-    "mainEntityOfPage": `https://kumbh-snan.com/blog/${a.id}`
+    "url": `https://kumbh-snan.com/blogs#${a.id}`,
+    "mainEntityOfPage": `https://kumbh-snan.com/blogs#${a.id}`
   };
   // Inject/update article schema
   let sc = document.getElementById('artSchema');
@@ -1076,7 +1076,7 @@ function openArticle(idx) {
   sc.textContent = JSON.stringify(schema);
 
   // Update meta
-  updateMeta({ title:a.seoTitle, desc:a.seoDesc, url:`https://kumbh-snan.com/blog/${a.id}`, type:'article' });
+  updateMeta({ title:a.seoTitle, desc:a.seoDesc, url:`https://kumbh-snan.com/blogs#${a.id}`, type:'article' });
 
   // Populate header
   document.getElementById('breadCrumbTitle').textContent = a.title.slice(0,45) + (a.title.length > 45 ? '…' : '');
@@ -1205,20 +1205,20 @@ function filterCat(key, btn) {
 /* ════ SHARE ════ */
 function shareWA(idx) {
   const a = ARTICLES[idx];
-  window.open(`https://wa.me/?text=${encodeURIComponent(a.title + '\n\nRead here: https://kumbh-snan.com/blog/' + a.id)}`, '_blank');
+  window.open(`https://wa.me/?text=${encodeURIComponent(a.title + '\n\nRead here: https://kumbh-snan.com/blogs#' + a.id)}`, '_blank');
 }
 function shareTW(idx) {
   const a = ARTICLES[idx];
-  window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(a.title)}&url=${encodeURIComponent('https://kumbh-snan.com/blog/' + a.id)}&hashtags=KumbhSnan,MahaKumbh2027,NashikKumbh`, '_blank');
+  window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(a.title)}&url=${encodeURIComponent('https://kumbh-snan.com/blogs#' + a.id)}&hashtags=KumbhSnan,MahaKumbh2027,NashikKumbh`, '_blank');
 }
 function shareFB(idx) {
-  window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent('https://kumbh-snan.com/blog/' + ARTICLES[idx].id)}`, '_blank');
+  window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent('https://kumbh-snan.com/blogs#' + ARTICLES[idx].id)}`, '_blank');
 }
 function shareLI(idx) {
-  window.open(`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent('https://kumbh-snan.com/blog/' + ARTICLES[idx].id)}&title=${encodeURIComponent(ARTICLES[idx].title)}`, '_blank');
+  window.open(`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent('https://kumbh-snan.com/blogs#' + ARTICLES[idx].id)}&title=${encodeURIComponent(ARTICLES[idx].title)}`, '_blank');
 }
 function copyLink(idx) {
-  navigator.clipboard.writeText('https://kumbh-snan.com/blog/' + ARTICLES[idx].id)
+  navigator.clipboard.writeText('https://kumbh-snan.com/blogs#' + ARTICLES[idx].id)
     .then(() => showToast('Link copied to clipboard!', 'ok'))
     .catch(() => showToast('Copy link from your browser address bar.', 'err'));
 }
