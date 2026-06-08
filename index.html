@@ -1115,7 +1115,7 @@ function submitBooking() {
 
 function getPlanAmount(plan) {
   const p = (plan || '').toLowerCase();
-  if (p.includes('vyaktigat')) return 1;
+  if (p.includes('vyaktigat')) return 501;
   if (p.includes('parivar')) return 1001;
   if (p.includes('sampoorna')) return 2101;
   return 0;
