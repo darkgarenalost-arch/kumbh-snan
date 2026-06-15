@@ -1077,6 +1077,9 @@ function submitBooking() {
     return;
   }
 
+  // ✅ Pixel: fire InitiateCheckout only when a real user starts the payment flow
+  fbq('track', 'InitiateCheckout', { value: amount, currency: 'INR', contents: [{ id: plan, quantity: 1 }] });
+
   const rz = new Razorpay({
     key: CFG.RAZORPAY_KEY,
     amount: amount * 100,
@@ -1094,6 +1097,15 @@ function submitBooking() {
     theme: { color: '#c9a84c' },
     handler: async function (response) {
       const paymentId = response.razorpay_payment_id || '';
+
+      // ✅ Pixel: fire Purchase ONLY after Razorpay confirms real payment
+      fbq('track', 'Purchase', {
+        value: amount,
+        currency: 'INR',
+        contents: [{ id: plan, quantity: 1 }],
+        content_type: 'product'
+      });
+
       const bookingPayload = buildBookingPayload({
         name,
         gotra,
