@@ -135,6 +135,14 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;height:66px;display:flex;al
 .wa-btn:hover .wa-tip{opacity:1}
 @keyframes waBnc{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
 
+/* ===== HERO VIDEO (YouTube Shorts) ===== */
+@media(max-width:600px){
+  .hero-vid-wrap{max-width:100%!important}
+}
+@media(min-width:601px){
+  .hero-vid-wrap{max-width:280px!important}
+}
+
 /* ===== HOME — HERO ===== */
 .hero{min-height:100vh;position:relative;display:flex;align-items:center;overflow:hidden;padding-top:66px}
 .hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 20% 50%,rgba(201,168,76,.09) 0%,transparent 60%),radial-gradient(ellipse at 80% 20%,rgba(201,168,76,.05) 0%,transparent 50%),linear-gradient(180deg,#080808 0%,#0F0800 50%,#080808 100%)}
@@ -409,6 +417,33 @@ footer{background:var(--dk2);border-top:1px solid var(--gold-bdr);padding:3rem 0
           <button class="btn-p" onclick="nav('booking')">🕉 Book Your Digital Snan</button>
           <button class="btn-o" onclick="nav('pricing')">View All Packages →</button>
         </div>
+
+        <!-- BOOKING GUIDE VIDEO -->
+        <div style="margin-bottom:2.5rem">
+          <p style="font-size:.78rem;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;font-weight:600;margin-bottom:.85rem;display:flex;align-items:center;gap:.4rem">
+            <span>🎬</span> Watch: How to Book in 2 Minutes
+          </p>
+          <div class="hero-vid-wrap" style="position:relative;width:100%;max-width:320px;border-radius:14px;overflow:hidden;border:1px solid var(--gold-bdr);box-shadow:0 8px 32px rgba(0,0,0,.55),0 0 24px rgba(201,168,76,.12)">
+            <div style="height:2px;background:linear-gradient(90deg,var(--gold),var(--gold-b),var(--gold))"></div>
+            <!-- Shorts aspect ratio: 9:16 -->
+            <div style="position:relative;padding-bottom:177.78%;height:0;overflow:hidden;background:#000">
+              <iframe
+                src="https://www.youtube.com/embed/ruaZzA49uXM?rel=0&modestbranding=1&playsinline=1"
+                title="How to Book Kumbh Snan — Booking Guide"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen
+                loading="lazy"
+                style="position:absolute;top:0;left:0;width:100%;height:100%;border:none"
+              ></iframe>
+            </div>
+            <div style="padding:.65rem 1rem;background:var(--dk3);display:flex;align-items:center;justify-content:space-between;gap:.5rem">
+              <span style="font-size:.78rem;color:var(--gl)">🕉 Book your snan from anywhere</span>
+              <button class="btn-p btn-sm" onclick="nav('booking')" style="font-size:.75rem;padding:.4rem 1rem;white-space:nowrap">Book Now</button>
+            </div>
+          </div>
+        </div>
+
         <div class="hero-trust">
           <div class="ti"><span class="ic">✅</span> Real Ritual, Real Ghat</div>
           <div class="ti"><span class="ic">🎥</span> Video Proof on WhatsApp</div>
@@ -555,51 +590,6 @@ footer{background:var(--dk2);border-top:1px solid var(--gold-bdr);padding:3rem 0
       <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
         <button class="btn-p" onclick="nav('booking')">🕉 Book My Digital Snan</button>
         <button class="btn-o" onclick="nav('pricing')">View All Packages</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- HOW TO BOOK — VIDEO GUIDE -->
-  <section class="sec" style="background:var(--dk2);border-top:1px solid var(--gold-bdr)">
-    <div class="con">
-      <div style="text-align:center;margin-bottom:2.5rem" class="reveal">
-        <div class="badge" style="margin:0 auto 1rem">📽️ Watch &amp; Learn</div>
-        <h2 class="sec-title">How to Book Your <span>Kumbh Snan</span></h2>
-        <p class="sec-sub" style="margin:.75rem auto 0">A quick guide to booking your sacred digital snan in just a few minutes — from anywhere in the world.</p>
-      </div>
-      <div class="reveal" style="max-width:860px;margin:0 auto">
-        <div style="position:relative;background:var(--dk3);border:1px solid var(--gold-bdr);border-radius:16px;overflow:hidden;box-shadow:0 12px 48px rgba(0,0,0,.6),0 0 40px rgba(201,168,76,.1)">
-          <!-- Gold top accent bar -->
-          <div style="height:3px;background:linear-gradient(90deg,var(--gold),var(--gold-b),var(--gold))"></div>
-          <div style="padding:1.5rem 1.5rem .75rem;display:flex;align-items:center;gap:.6rem;border-bottom:1px solid var(--gold-bdr)">
-            <span style="font-size:1rem">🎬</span>
-            <span style="font-family:var(--serif);color:var(--gold);font-size:1rem;font-weight:600;letter-spacing:.5px">Booking Guide — Kumbh Snan</span>
-            <span style="margin-left:auto;font-size:.75rem;color:var(--gray);letter-spacing:.5px;text-transform:uppercase">HD Video</span>
-          </div>
-          <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden">
-            <video
-              id="bookingGuideVideo"
-              src="videos/homepage-video.mp4"
-              controls
-              preload="metadata"
-              poster=""
-              playsinline
-              style="position:absolute;top:0;left:0;width:100%;height:100%;background:#000;outline:none"
-            >
-              Your browser does not support the video tag. Please update your browser to watch this guide.
-            </video>
-          </div>
-          <div style="padding:1rem 1.5rem 1.25rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.75rem">
-            <p style="color:var(--gray);font-size:.82rem;line-height:1.5">🕉 Watch how easy it is to book your sacred Kumbh Snan and receive video proof on WhatsApp within 24 hours.</p>
-            <button class="btn-p btn-sm" onclick="nav('booking')" style="white-space:nowrap;flex-shrink:0">Book Now →</button>
-          </div>
-        </div>
-        <!-- Trust line below video -->
-        <div style="display:flex;justify-content:center;gap:2rem;flex-wrap:wrap;margin-top:1.75rem">
-          <div class="ti"><span class="ic">🔒</span> Secure Booking</div>
-          <div class="ti"><span class="ic">🎥</span> Video Proof on WhatsApp</div>
-          <div class="ti"><span class="ic">⚡</span> Takes Under 2 Minutes</div>
-        </div>
       </div>
     </div>
   </section>
