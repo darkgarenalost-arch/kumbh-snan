@@ -233,7 +233,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;height:66px;display:flex;al
 .pc-features .crs+span{color:#444}
 
 /* ===== BOOKING ===== */
-.bk-wrap{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:start}
+.bk-wrap{display:grid;grid-template-columns:1fr;gap:3rem;align-items:start}
 .bk-step{display:flex;gap:1rem;margin-bottom:1.5rem}
 .bk-snum{width:30px;height:30px;background:var(--gold-dim);border:1px solid var(--gold-bdr);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--gold);font-weight:700;font-size:.82rem;flex-shrink:0}
 .bk-stxt h4{font-size:.93rem;font-weight:600;margin-bottom:.2rem}
@@ -744,27 +744,7 @@ footer{background:var(--dk2);border-top:1px solid var(--gold-bdr);padding:3rem 0
     <section class="sec">
       <div class="con">
         <div class="bk-wrap">
-          <!-- Info -->
-          <div class="reveal">
-            <div class="badge">What Happens Next</div>
-            <h2 style="font-family:var(--serif);font-size:2rem;margin-bottom:.9rem">Your Journey to <span style="color:var(--gold)">Divine Blessings</span></h2>
-            <p style="color:var(--gl);margin-bottom:2rem;font-size:.95rem">After payment, our team will guide you through each step.</p>
-            <div class="bk-step"><div class="bk-snum">1</div><div class="bk-stxt"><h4>Fill Details &amp; Pay</h4><p>Fill in your details and complete secure payment through Razorpay.</p></div></div>
-            <div class="bk-step"><div class="bk-snum">2</div><div class="bk-stxt"><h4>We Confirm Your Slot</h4><p>Team confirms your slot and booking details via WhatsApp.</p></div></div>
-            <div class="bk-step"><div class="bk-snum">3</div><div class="bk-stxt"><h4>Send Your Photo(s)</h4><p>After payment, send your photo via WhatsApp with your booking reference.</p></div></div>
-            <div class="bk-step"><div class="bk-snum">4</div><div class="bk-stxt"><h4>Receive Your Video</h4><p>On the scheduled date we perform your sacred Snan and send you the video proof.</p></div></div>
-            <div class="card" style="margin-top:2rem;background:linear-gradient(135deg,#1c1000,var(--dk3))">
-              <div style="display:flex;gap:1rem;align-items:flex-start">
-                <div style="font-size:1.8rem">💬</div>
-                <div>
-                  <h4 style="font-weight:600;margin-bottom:.25rem">Prefer WhatsApp?</h4>
-                  <p style="color:var(--gl);font-size:.88rem;margin-bottom:.9rem">Chat with us directly to book your slot instantly.</p>
-                  <a href="https://wa.me/918275872736?text=Namaste!%20I%20want%20to%20book%20Digital%20Snan" target="_blank" class="btn-p btn-sm">Chat on WhatsApp</a>
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- Form -->
+          <!-- === FORM — TOP === -->
           <div class="reveal">
             <div class="bk-form">
               <h3 style="font-family:var(--serif);font-size:1.45rem;margin-bottom:.35rem;color:var(--gold)">Booking Request</h3>
@@ -788,6 +768,27 @@ footer{background:var(--dk2);border-top:1px solid var(--gold-bdr);padding:3rem 0
               <div class="fg"><label class="fl">Special Requests / Message</label><textarea class="ft fi" id="bMsg" placeholder="Names of family members, ancestor prayers, special requests..."></textarea></div>
               <button class="fsub" onclick="submitBooking()">🕉 Pay Securely with Razorpay</button>
               <p class="fnote">✅ Secure payment powered by Razorpay.</p>
+            </div>
+          </div>
+
+          <!-- === INFO — BOTTOM === -->
+          <div class="reveal">
+            <div class="badge">What Happens Next</div>
+            <h2 style="font-family:var(--serif);font-size:2rem;margin-bottom:.9rem">Your Journey to <span style="color:var(--gold)">Divine Blessings</span></h2>
+            <p style="color:var(--gl);margin-bottom:2rem;font-size:.95rem">After payment, our team will guide you through each step.</p>
+            <div class="bk-step"><div class="bk-snum">1</div><div class="bk-stxt"><h4>Fill Details &amp; Pay</h4><p>Fill in your details and complete secure payment through Razorpay.</p></div></div>
+            <div class="bk-step"><div class="bk-snum">2</div><div class="bk-stxt"><h4>We Confirm Your Slot</h4><p>Team confirms your slot and booking details via WhatsApp.</p></div></div>
+            <div class="bk-step"><div class="bk-snum">3</div><div class="bk-stxt"><h4>Send Your Photo(s)</h4><p>After payment, send your photo via WhatsApp with your booking reference.</p></div></div>
+            <div class="bk-step"><div class="bk-snum">4</div><div class="bk-stxt"><h4>Receive Your Video</h4><p>On the scheduled date we perform your sacred Snan and send you the video proof.</p></div></div>
+            <div class="card" style="margin-top:2rem;background:linear-gradient(135deg,#1c1000,var(--dk3))">
+              <div style="display:flex;gap:1rem;align-items:flex-start">
+                <div style="font-size:1.8rem">💬</div>
+                <div>
+                  <h4 style="font-weight:600;margin-bottom:.25rem">Prefer WhatsApp?</h4>
+                  <p style="color:var(--gl);font-size:.88rem;margin-bottom:.9rem">Chat with us directly to book your slot instantly.</p>
+                  <a href="https://wa.me/918275872736?text=Namaste!%20I%20want%20to%20book%20Digital%20Snan" target="_blank" class="btn-p btn-sm">Chat on WhatsApp</a>
+                </div>
+              </div>
             </div>
           </div>
         </div>
