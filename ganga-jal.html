@@ -10,7 +10,7 @@
 <meta property="og:type" content="product">
 <meta property="og:title" content="Ganga Jal 500ml — Pure Holy Water from Triveni Sangam, Nashik">
 <meta property="og:description" content="Authentic Ganga Jal collected from Triveni Sangam, Nashik. Spiritually purified & sealed. COD available, pan-India delivery.">
-<meta property="og:image" content="ganga-jal-bottle.jpg">
+<meta property="og:image" content="ganga-jal-bottle.png">
 <meta property="og:site_name" content="Kumbh Snan">
 <meta property="og:locale" content="en_IN">
 <meta name="twitter:card" content="summary_large_image">
@@ -308,12 +308,12 @@ footer{background:var(--dk2);border-top:1px solid var(--gold-bdr);padding:2.6rem
     <div class="pdp-wrap" id="buySection">
       <!-- Thumbnails: add more <button class="pdp-thumb"> entries here once more product photos are available -->
       <div class="pdp-thumbs" id="pdpThumbs">
-        <button class="pdp-thumb active" onclick="selectThumb(this,'ganga-jal-bottle.jpg')"><img src="ganga-jal-bottle.jpg" alt="Ganga Jal bottle thumbnail"></button>
+        <button class="pdp-thumb active" onclick="selectThumb(this,'ganga-jal-bottle.png')"><img src="ganga-jal-bottle.png" alt="Ganga Jal bottle thumbnail"></button>
       </div>
 
       <div class="pdp-main">
         <span class="pdp-tag">100% Authentic</span>
-        <img id="pdpMainImg" src="ganga-jal-bottle.jpg" alt="Ganga Jal 500ml bottle collected from Triveni Sangam, Nashik">
+        <img id="pdpMainImg" src="ganga-jal-bottle.png" alt="Ganga Jal 500ml bottle collected from Triveni Sangam, Nashik">
       </div>
 
       <div class="pdp-info">
@@ -457,7 +457,7 @@ footer{background:var(--dk2);border-top:1px solid var(--gold-bdr);padding:2.6rem
             <li><span class="ic">✓</span>Collected and handled with care by our team on the ground</li>
           </ul>
         </div>
-        <div class="abt-img"><img src="ganga-jal-bottle.jpg" alt="Ganga Jal bottle with diya and marigold flowers at the ghat"></div>
+        <div class="abt-img"><img src="ganga-jal-bottle.png" alt="Ganga Jal bottle with diya and marigold flowers at the ghat"></div>
       </div>
     </div>
   </section>
@@ -773,7 +773,7 @@ function buildOrderPayload(d) {
 }
 
 async function saveOrderToGoogleSheets(payload) {
-  if (!CFG.GOOGLE_SHEETS_WEB_APP_URL || CFG.GOOGLE_SHEETS_WEB_APP_URL.includes('https://script.google.com/macros/s/AKfycbzYeCO9HNaTPjm7zW2BU3gcF5JvYdWnCaC888QyCSx_EbS9C17HrXPm8fiP_nLk6H-e/exec')) {
+  if (!CFG.GOOGLE_SHEETS_WEB_APP_URL || CFG.GOOGLE_SHEETS_WEB_APP_URL.includes('PASTE_')) {
     throw new Error('Google Sheets Web App URL is not configured yet.');
   }
   const res = await fetch(CFG.GOOGLE_SHEETS_WEB_APP_URL, {
