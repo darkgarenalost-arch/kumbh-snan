@@ -103,7 +103,7 @@ td strong{color:var(--wh)}
       <h2>Admin Login</h2>
       <p>Sign in with the Google account allowed in your Firestore security rules.</p>
       <button class="btn" id="loginBtn" type="button">Sign in with Google</button>
-      <div class="notice">Allowed admin: <strong>info.kumbhsnan@gmail.com</strong></div>
+      <div class="notice">Allowed admin: <strong>darkgarenalost@gmail.com</strong></div>
       <div class="message error" id="loginError"></div>
     </div>
   </section>
@@ -191,7 +191,7 @@ const firebaseConfig = {
   measurementId: "G-G9LHGSRFB7"
 };
 
-const ADMIN_EMAILS = ['info.kumbhsnan@gmail.com'];
+const ADMIN_EMAILS = ['darkgarenalost@gmail.com'];
 const COLLECTION = 'gangaJalOrders';
 const MAX_ORDERS = 2000;
 
@@ -225,7 +225,7 @@ auth.onAuthStateChanged(user => {
 
   if (!ADMIN_EMAILS.map(normalizeEmail).includes(normalizeEmail(user.email))) {
     showLogin();
-    showLoginError('Signed in as ' + safe(user.email) + ', but this email is not an admin. Use info.kumbhsnan@gmail.com or update ADMIN_EMAILS and Firestore rules.');
+    showLoginError('Signed in as ' + safe(user.email) + ', but this email is not an admin. Use darkgarenalost@gmail.com or update ADMIN_EMAILS and Firestore rules.');
     auth.signOut();
     return;
   }
@@ -618,7 +618,7 @@ function authMessage(error) {
 
 function firestoreMessage(error) {
   if (error.code === 'permission-denied') {
-    return 'Permission denied. Make sure you are signed in as info.kumbhsnan@gmail.com and that Firestore rules allow read access for that email.';
+    return 'Permission denied. Make sure you are signed in as darkgarenalost@gmail.com and that Firestore rules allow read access for that email.';
   }
   if (error.code === 'failed-precondition') {
     return 'Firestore needs an index or query setup for this view. Open the Firebase console link from the browser console if Firebase shows one.';
