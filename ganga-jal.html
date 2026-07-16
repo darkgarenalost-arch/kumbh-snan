@@ -778,30 +778,25 @@ function buildOrderPayload(d) {
 }
 
 async function saveOrderToGoogleSheets(payload) {
-  if (!CFG.GOOGLE_SHEETS_WEB_APP_URL || CFG.GOOGLE_SHEETS_WEB_APP_URL.includes('PASTE_')) {
-    throw new Error('Google Sheets Web App URL is not configured yet.');
+  // Same Google Sheets save pattern as the working Kumbh Snan website.
+  if (!CFG.GOOGLE_SHEETS_WEB_APP_URL) {
+    throw new Error('Google Sheets Web App URL is not configured.');
   }
 
-  const body = JSON.stringify(payload);
-  const request = {
+  const res = await fetch(CFG.GOOGLE_SHEETS_WEB_APP_URL, {
     method: 'POST',
-    mode: 'no-cors',
     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-    body
-  };
+    body: JSON.stringify(payload)
+  });
 
-  if (navigator.sendBeacon) {
-    const sent = navigator.sendBeacon(
-      CFG.GOOGLE_SHEETS_WEB_APP_URL,
-      new Blob([body], { type: 'text/plain;charset=utf-8' })
-    );
-    if (sent) return { success: true };
+  const data = await res.json().catch(() => null);
+
+  if (!res.ok || !data || data.success !== true) {
+    throw new Error(data?.error || `Google Sheets request failed with status ${res.status}`);
   }
 
-  await fetch(CFG.GOOGLE_SHEETS_WEB_APP_URL, request);
-  return { success: true };
+  return data;
 }
-
 function sheetSafe(value, maxLength) {
   return String(value || '')
     .replace(/[\u0000-\u001F\u007F]/g, ' ')
