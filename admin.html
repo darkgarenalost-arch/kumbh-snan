@@ -10,10 +10,13 @@
 <style>
 :root{--gold:#C9A84C;--gold-b:#F0C448;--gold-dim:rgba(201,168,76,.12);--gold-bdr:rgba(201,168,76,.28);--dk:#080808;--dk2:#0F0F0F;--dk3:#141414;--dk4:#1C1C1C;--wh:#F8F4EC;--gray:#888880;--gl:#AAAAAA;--green:#5ec26a;--red:#d95f5f;--serif:'Playfair Display',Georgia,serif;--sans:'Inter',system-ui,sans-serif}
 *{box-sizing:border-box;margin:0;padding:0}
+html{color-scheme:dark}
 body{min-height:100vh;background:var(--dk);color:var(--wh);font-family:var(--sans);line-height:1.5}
+body.modal-open{overflow:hidden}
 button,input,select{font:inherit}
 button{cursor:pointer;border:0}
-.top{position:sticky;top:0;z-index:10;background:rgba(8,8,8,.94);backdrop-filter:blur(18px);border-bottom:1px solid var(--gold-bdr)}
+button:disabled{cursor:not-allowed;opacity:.62}
+.top{position:sticky;top:0;z-index:20;background:rgba(8,8,8,.94);backdrop-filter:blur(18px);border-bottom:1px solid var(--gold-bdr)}
 .top-in{display:flex;align-items:center;justify-content:space-between;gap:1rem;max-width:1440px;margin:0 auto;padding:1rem 1.4rem}
 .brand{display:flex;align-items:center;gap:.75rem}
 .mark{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--gold-bdr);background:var(--dk3);color:var(--gold);font-family:var(--serif);font-weight:800}
@@ -21,12 +24,13 @@ button{cursor:pointer;border:0}
 .brand p{color:var(--gray);font-size:.8rem}
 .user{display:flex;align-items:center;gap:.7rem;flex-wrap:wrap;justify-content:flex-end}
 .user span{color:var(--gl);font-size:.86rem}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:.45rem;border-radius:8px;padding:.68rem 1rem;font-weight:700;background:linear-gradient(135deg,var(--gold),var(--gold-b));color:var(--dk)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.45rem;border-radius:8px;padding:.68rem 1rem;font-weight:700;background:linear-gradient(135deg,var(--gold),var(--gold-b));color:var(--dk);min-height:42px}
 .btn.secondary{background:var(--dk3);color:var(--gold);border:1px solid var(--gold-bdr)}
 .btn.danger{background:#351313;color:#ffd9d9;border:1px solid rgba(217,95,95,.35)}
+.btn.small{padding:.48rem .72rem;min-height:34px;font-size:.8rem}
 .wrap{max-width:1440px;margin:0 auto;padding:1.4rem}
 .login{min-height:calc(100vh - 74px);display:grid;place-items:center;padding:2rem}
-.login-box{width:min(460px,100%);background:var(--dk3);border:1px solid var(--gold-bdr);border-radius:10px;padding:2rem;text-align:center;box-shadow:0 16px 50px rgba(0,0,0,.35)}
+.login-box{width:min(480px,100%);background:var(--dk3);border:1px solid var(--gold-bdr);border-radius:10px;padding:2rem;text-align:center;box-shadow:0 16px 50px rgba(0,0,0,.35)}
 .login-box h2{font-family:var(--serif);font-size:1.8rem;color:var(--gold);margin-bottom:.45rem}
 .login-box p{color:var(--gl);margin-bottom:1.4rem}
 .notice{margin-top:1rem;color:var(--gray);font-size:.82rem}
@@ -37,11 +41,11 @@ button{cursor:pointer;border:0}
 .panel{background:var(--dk3);border:1px solid var(--gold-bdr);border-radius:8px;margin-bottom:1rem}
 .panel-head{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1rem;border-bottom:1px solid var(--gold-bdr);flex-wrap:wrap}
 .panel-head h2{font-family:var(--serif);font-size:1.2rem;color:var(--gold)}
-.filters{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr auto;gap:.7rem;padding:1rem}
-.field{width:100%;background:var(--dk2);border:1px solid var(--gold-bdr);border-radius:8px;color:var(--wh);padding:.72rem .8rem;outline:none}
-.field:focus{border-color:var(--gold)}
+.filters{display:grid;grid-template-columns:minmax(220px,2fr) 1fr 1fr 1fr 1fr auto;gap:.7rem;padding:1rem}
+.field{width:100%;background:var(--dk2);border:1px solid var(--gold-bdr);border-radius:8px;color:var(--wh);padding:.72rem .8rem;outline:none;min-height:42px}
+.field:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,.1)}
 .table-wrap{overflow:auto;max-height:calc(100vh - 350px)}
-table{width:100%;border-collapse:collapse;min-width:1180px}
+table{width:100%;border-collapse:collapse;min-width:1260px}
 th,td{padding:.75rem .85rem;border-bottom:1px solid rgba(201,168,76,.16);text-align:left;vertical-align:top;font-size:.86rem}
 th{position:sticky;top:0;background:#171717;color:var(--gold);font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;z-index:1}
 td{color:var(--gl)}
@@ -49,12 +53,29 @@ td strong{color:var(--wh)}
 .pill{display:inline-flex;border-radius:999px;padding:.22rem .55rem;font-size:.74rem;font-weight:700;border:1px solid var(--gold-bdr);color:var(--gold);background:var(--gold-dim);white-space:nowrap}
 .pill.paid{color:#a7edb1;border-color:rgba(94,194,106,.35);background:rgba(94,194,106,.1)}
 .pill.cod{color:#ffe0a3;border-color:rgba(240,196,72,.35);background:rgba(240,196,72,.08)}
+.pill.other{color:#cfd8ff;border-color:rgba(150,170,255,.35);background:rgba(150,170,255,.08)}
 .muted{color:var(--gray);font-size:.8rem}
-.addr{max-width:260px;color:var(--gl)}
+.addr{max-width:280px;color:var(--gl);white-space:normal}
 .empty{padding:3rem 1rem;text-align:center;color:var(--gray)}
-.error{background:#351313;border:1px solid rgba(217,95,95,.4);color:#ffd9d9;padding:.9rem 1rem;border-radius:8px;margin-bottom:1rem;display:none}
-@media(max-width:980px){.grid{grid-template-columns:repeat(2,1fr)}.filters{grid-template-columns:1fr 1fr}.top-in{align-items:flex-start;flex-direction:column}.user{justify-content:flex-start}}
-@media(max-width:560px){.grid,.filters{grid-template-columns:1fr}.wrap{padding:1rem}.stat .val{font-size:1.5rem}}
+.message{border-radius:8px;margin-bottom:1rem;padding:.9rem 1rem;display:none}
+.message.error{background:#351313;border:1px solid rgba(217,95,95,.4);color:#ffd9d9}
+.message.ok{background:#12351b;border:1px solid rgba(94,194,106,.4);color:#d8ffdf}
+.login .message{margin-top:1rem;margin-bottom:0;text-align:left}
+.modal{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;padding:1rem;background:rgba(0,0,0,.72)}
+.modal[aria-hidden=false]{display:flex}
+.modal-card{width:min(900px,100%);max-height:90vh;overflow:auto;background:var(--dk3);border:1px solid var(--gold-bdr);border-radius:10px;box-shadow:0 24px 80px rgba(0,0,0,.55)}
+.modal-head{position:sticky;top:0;background:rgba(20,20,20,.96);backdrop-filter:blur(12px);display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;padding:1rem;border-bottom:1px solid var(--gold-bdr)}
+.modal-head h3{font-family:var(--serif);color:var(--gold);font-size:1.2rem}
+.modal-body{padding:1rem}
+.detail-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.75rem}
+.detail{background:var(--dk2);border:1px solid rgba(201,168,76,.16);border-radius:8px;padding:.8rem}
+.detail.full{grid-column:1 / -1}
+.detail .k{color:var(--gray);font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.28rem}
+.detail .v{color:var(--wh);word-break:break-word;white-space:pre-wrap}
+.modal-actions{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:1rem}
+.raw{margin-top:1rem;background:#0b0b0b;border:1px solid rgba(201,168,76,.16);border-radius:8px;color:#d8d8d8;padding:1rem;white-space:pre-wrap;word-break:break-word;font:12px/1.5 Consolas,monospace}
+@media(max-width:980px){.grid{grid-template-columns:repeat(2,1fr)}.filters{grid-template-columns:1fr 1fr}.top-in{align-items:flex-start;flex-direction:column}.user{justify-content:flex-start}.table-wrap{max-height:none}}
+@media(max-width:620px){.grid,.filters,.detail-grid{grid-template-columns:1fr}.wrap{padding:1rem}.stat .val{font-size:1.5rem}.top-in{padding:1rem}.user .btn{width:100%}.user{width:100%}.login{padding:1rem}.login-box{padding:1.4rem}.modal-head{align-items:stretch;flex-direction:column}}
 </style>
 </head>
 <body>
@@ -64,14 +85,14 @@ td strong{color:var(--wh)}
       <div class="mark">GJ</div>
       <div>
         <h1>Ganga Jal Orders</h1>
-        <p>Firestore admin dashboard</p>
+        <p>Firebase admin dashboard</p>
       </div>
     </div>
     <div class="user" id="userBox" style="display:none">
       <span id="userEmail"></span>
-      <button class="btn secondary" id="refreshBtn">Refresh</button>
-      <button class="btn" id="exportBtn">Export XLSX</button>
-      <button class="btn danger" id="logoutBtn">Logout</button>
+      <button class="btn secondary" id="refreshBtn" type="button">Refresh</button>
+      <button class="btn" id="exportBtn" type="button">Export XLSX</button>
+      <button class="btn danger" id="logoutBtn" type="button">Logout</button>
     </div>
   </div>
 </header>
@@ -81,16 +102,19 @@ td strong{color:var(--wh)}
     <div class="login-box">
       <h2>Admin Login</h2>
       <p>Sign in with the Google account allowed in your Firestore security rules.</p>
-      <button class="btn" id="loginBtn">Sign in with Google</button>
-      <div class="notice">No customer login is used on the public website.</div>
+      <button class="btn" id="loginBtn" type="button">Sign in with Google</button>
+      <div class="notice">Allowed admin: <strong>info.kumbhsnan@gmail.com</strong></div>
+      <div class="message error" id="loginError"></div>
     </div>
   </section>
 
   <section class="wrap" id="dashboardView" style="display:none">
-    <div class="error" id="errorBox"></div>
+    <div class="message error" id="errorBox"></div>
+    <div class="message ok" id="infoBox"></div>
+
     <div class="grid">
-      <div class="stat"><div class="lbl">Total Orders</div><div class="val" id="totalOrders">0</div></div>
-      <div class="stat"><div class="lbl">Total Revenue</div><div class="val" id="totalRevenue">Rs. 0</div></div>
+      <div class="stat"><div class="lbl">Showing Orders</div><div class="val" id="totalOrders">0</div></div>
+      <div class="stat"><div class="lbl">Showing Revenue</div><div class="val" id="totalRevenue">Rs. 0</div></div>
       <div class="stat"><div class="lbl">COD Orders</div><div class="val" id="codOrders">0</div></div>
       <div class="stat"><div class="lbl">Prepaid Orders</div><div class="val" id="paidOrders">0</div></div>
     </div>
@@ -98,10 +122,10 @@ td strong{color:var(--wh)}
     <div class="panel">
       <div class="panel-head">
         <h2>Orders</h2>
-        <div class="muted" id="lastUpdated">Waiting for data...</div>
+        <div class="muted" id="lastUpdated">Connecting to Firestore...</div>
       </div>
       <div class="filters">
-        <input class="field" id="searchInput" placeholder="Search name, phone, city, payment ID">
+        <input class="field" id="searchInput" placeholder="Search order, name, phone, email, city, payment ID">
         <select class="field" id="statusFilter">
           <option value="">All statuses</option>
           <option value="Paid">Paid</option>
@@ -112,16 +136,16 @@ td strong{color:var(--wh)}
           <option value="Cash on Delivery">Cash on Delivery</option>
           <option value="Prepaid - Razorpay">Prepaid - Razorpay</option>
         </select>
-        <input class="field" id="fromDate" type="date">
-        <input class="field" id="toDate" type="date">
-        <button class="btn secondary" id="clearBtn">Clear</button>
+        <input class="field" id="fromDate" type="date" aria-label="From date">
+        <input class="field" id="toDate" type="date" aria-label="To date">
+        <button class="btn secondary" id="clearBtn" type="button">Clear</button>
       </div>
       <div class="table-wrap">
         <table>
           <thead>
             <tr>
               <th>Time</th><th>Order</th><th>Customer</th><th>Contact</th><th>Address</th>
-              <th>Qty</th><th>Amount</th><th>Payment</th><th>Status</th><th>Payment ID</th>
+              <th>Qty</th><th>Amount</th><th>Payment</th><th>Status</th><th>Action</th>
             </tr>
           </thead>
           <tbody id="ordersBody"></tbody>
@@ -131,6 +155,26 @@ td strong{color:var(--wh)}
     </div>
   </section>
 </main>
+
+<div class="modal" id="detailsModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="detailsTitle">
+  <div class="modal-card">
+    <div class="modal-head">
+      <div>
+        <h3 id="detailsTitle">Order Details</h3>
+        <div class="muted" id="detailsSubtitle"></div>
+      </div>
+      <button class="btn secondary small" id="closeDetailsBtn" type="button">Close</button>
+    </div>
+    <div class="modal-body">
+      <div class="detail-grid" id="detailsGrid"></div>
+      <div class="modal-actions">
+        <button class="btn secondary" id="copyAddressBtn" type="button">Copy Address</button>
+        <button class="btn secondary" id="copyJsonBtn" type="button">Copy Details</button>
+      </div>
+      <pre class="raw" id="rawJson"></pre>
+    </div>
+  </div>
+</div>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-auth-compat.js"></script>
@@ -149,6 +193,7 @@ const firebaseConfig = {
 
 const ADMIN_EMAILS = ['info.kumbhsnan@gmail.com'];
 const COLLECTION = 'gangaJalOrders';
+const MAX_ORDERS = 2000;
 
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
@@ -157,50 +202,81 @@ const db = firebase.firestore();
 let allOrders = [];
 let filteredOrders = [];
 let unsubscribe = null;
+let activeOrder = null;
 
 const el = id => document.getElementById(id);
-const money = n => 'Rs. ' + Number(n || 0).toLocaleString('en-IN');
-const fmtDate = value => {
-  const date = value?.toDate ? value.toDate() : value ? new Date(value) : null;
-  return date && !Number.isNaN(date.getTime()) ? date.toLocaleString('en-IN') : '';
-};
-const plainDate = value => {
-  const date = value?.toDate ? value.toDate() : value ? new Date(value) : null;
-  return date && !Number.isNaN(date.getTime()) ? date : null;
-};
+const money = value => 'Rs. ' + Number(value || 0).toLocaleString('en-IN');
+const safe = value => String(value == null ? '' : value);
+const esc = value => safe(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const normalizeEmail = value => safe(value).trim().toLowerCase();
+
+const provider = new firebase.auth.GoogleAuthProvider();
+provider.setCustomParameters({ prompt: 'select_account' });
+
+auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(error => showLoginError(error.message));
+auth.getRedirectResult().catch(error => showLoginError(authMessage(error)));
 
 auth.onAuthStateChanged(user => {
+  hideAllMessages();
   if (!user) {
     showLogin();
     return;
   }
-  if (ADMIN_EMAILS.length && !ADMIN_EMAILS.includes(user.email)) {
-    showError('This Google account is not in ADMIN_EMAILS. Add it in this file and in Firestore rules.');
+
+  if (!ADMIN_EMAILS.map(normalizeEmail).includes(normalizeEmail(user.email))) {
+    showLogin();
+    showLoginError('Signed in as ' + safe(user.email) + ', but this email is not an admin. Use info.kumbhsnan@gmail.com or update ADMIN_EMAILS and Firestore rules.');
     auth.signOut();
     return;
   }
+
   showDashboard(user);
 });
 
-el('loginBtn').addEventListener('click', async () => {
-  try {
-    await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
-  } catch (error) {
-    showError(error.message);
-  }
-});
+el('loginBtn').addEventListener('click', signIn);
 el('logoutBtn').addEventListener('click', () => auth.signOut());
-el('refreshBtn').addEventListener('click', () => render());
-el('exportBtn').addEventListener('click', exportXlsx);
-['searchInput','statusFilter','paymentFilter','fromDate','toDate'].forEach(id => el(id).addEventListener('input', render));
-el('clearBtn').addEventListener('click', () => {
-  ['searchInput','statusFilter','paymentFilter','fromDate','toDate'].forEach(id => el(id).value = '');
-  render();
+el('refreshBtn').addEventListener('click', listenToOrders);
+el('exportBtn').addEventListener('click', exportOrders);
+el('clearBtn').addEventListener('click', clearFilters);
+el('ordersBody').addEventListener('click', event => {
+  const button = event.target.closest('[data-order-id]');
+  if (!button) return;
+  openDetails(button.dataset.orderId);
 });
+el('closeDetailsBtn').addEventListener('click', closeDetails);
+el('detailsModal').addEventListener('click', event => {
+  if (event.target.id === 'detailsModal') closeDetails();
+});
+el('copyAddressBtn').addEventListener('click', copyActiveAddress);
+el('copyJsonBtn').addEventListener('click', copyActiveJson);
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape') closeDetails();
+});
+['searchInput','statusFilter','paymentFilter','fromDate','toDate'].forEach(id => {
+  el(id).addEventListener('input', render);
+});
+
+async function signIn() {
+  clearLoginError();
+  setLoginBusy(true);
+  try {
+    await auth.signInWithPopup(provider);
+  } catch (error) {
+    if (['auth/popup-blocked','auth/cancelled-popup-request','auth/operation-not-supported-in-this-environment'].includes(error.code)) {
+      await auth.signInWithRedirect(provider);
+      return;
+    }
+    showLoginError(authMessage(error));
+  } finally {
+    setLoginBusy(false);
+  }
+}
 
 function showLogin() {
   if (unsubscribe) unsubscribe();
   unsubscribe = null;
+  allOrders = [];
+  filteredOrders = [];
   el('loginView').style.display = 'grid';
   el('dashboardView').style.display = 'none';
   el('userBox').style.display = 'none';
@@ -210,38 +286,78 @@ function showDashboard(user) {
   el('loginView').style.display = 'none';
   el('dashboardView').style.display = 'block';
   el('userBox').style.display = 'flex';
-  el('userEmail').textContent = user.email;
+  el('userEmail').textContent = user.email || 'Admin';
   listenToOrders();
 }
 
 function listenToOrders() {
   if (unsubscribe) unsubscribe();
-  unsubscribe = db.collection(COLLECTION).orderBy('createdAt', 'desc').limit(1000)
+  el('lastUpdated').textContent = 'Loading latest orders...';
+  hideError();
+
+  unsubscribe = db.collection(COLLECTION)
+    .orderBy('createdAt', 'desc')
+    .limit(MAX_ORDERS)
     .onSnapshot(snapshot => {
-      allOrders = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      el('lastUpdated').textContent = 'Updated ' + new Date().toLocaleString('en-IN');
+      allOrders = snapshot.docs.map(doc => normalizeOrder(doc));
+      el('lastUpdated').textContent = 'Showing ' + allOrders.length + ' latest orders. Updated ' + new Date().toLocaleString('en-IN');
       hideError();
       render();
     }, error => {
-      showError(error.message);
+      showError(firestoreMessage(error));
+      el('lastUpdated').textContent = 'Could not load orders';
+      allOrders = [];
+      render();
     });
 }
 
+function normalizeOrder(doc) {
+  const data = doc.data() || {};
+  return {
+    id: doc.id,
+    orderNumber: data.orderNumber || doc.id,
+    timestamp: data.timestamp || '',
+    createdAt: data.createdAt || null,
+    name: data.name || '',
+    phone: data.phone || '',
+    email: data.email || '',
+    address: data.address || '',
+    city: data.city || '',
+    state: data.state || '',
+    pincode: data.pincode || '',
+    product: data.product || 'Ganga Jal 500ml',
+    quantity: Number(data.quantity || data.qty || 0),
+    amount: Number(data.amount || 0),
+    paymentMethod: data.paymentMethod || '',
+    paymentId: data.paymentId || '',
+    status: data.status || '',
+    source: data.source || '',
+    pageUrl: data.pageUrl || '',
+    userAgent: data.userAgent || '',
+    _raw: data
+  };
+}
+
 function render() {
-  const q = el('searchInput').value.trim().toLowerCase();
+  const query = el('searchInput').value.trim().toLowerCase();
   const status = el('statusFilter').value;
   const payment = el('paymentFilter').value;
   const from = el('fromDate').value ? new Date(el('fromDate').value + 'T00:00:00') : null;
   const to = el('toDate').value ? new Date(el('toDate').value + 'T23:59:59') : null;
 
   filteredOrders = allOrders.filter(order => {
-    const text = [order.orderNumber, order.name, order.phone, order.email, order.city, order.state, order.pincode, order.paymentId].join(' ').toLowerCase();
-    const date = plainDate(order.createdAt) || plainDate(order.timestamp);
-    if (q && !text.includes(q)) return false;
+    const searchText = [
+      order.orderNumber, order.name, order.phone, order.email, order.address, order.city,
+      order.state, order.pincode, order.product, order.paymentMethod, order.paymentId,
+      order.status, order.source
+    ].join(' ').toLowerCase();
+    const orderDate = plainDate(order.createdAt) || plainDate(order.timestamp);
+
+    if (query && !searchText.includes(query)) return false;
     if (status && order.status !== status) return false;
     if (payment && order.paymentMethod !== payment) return false;
-    if (from && date && date < from) return false;
-    if (to && date && date > to) return false;
+    if (from && (!orderDate || orderDate < from)) return false;
+    if (to && (!orderDate || orderDate > to)) return false;
     return true;
   });
 
@@ -250,34 +366,39 @@ function render() {
 }
 
 function updateStats(orders) {
-  el('totalOrders').textContent = orders.length;
-  el('totalRevenue').textContent = money(orders.reduce((sum, o) => sum + Number(o.amount || 0), 0));
-  el('codOrders').textContent = orders.filter(o => o.paymentMethod === 'Cash on Delivery').length;
-  el('paidOrders').textContent = orders.filter(o => o.paymentMethod === 'Prepaid - Razorpay').length;
+  el('totalOrders').textContent = orders.length.toLocaleString('en-IN');
+  el('totalRevenue').textContent = money(orders.reduce((sum, order) => sum + Number(order.amount || 0), 0));
+  el('codOrders').textContent = orders.filter(order => order.paymentMethod === 'Cash on Delivery').length.toLocaleString('en-IN');
+  el('paidOrders').textContent = orders.filter(order => order.paymentMethod === 'Prepaid - Razorpay').length.toLocaleString('en-IN');
 }
 
 function drawTable(orders) {
   el('emptyState').style.display = orders.length ? 'none' : 'block';
   el('ordersBody').innerHTML = orders.map(order => {
-    const statusClass = order.status === 'Paid' ? 'paid' : 'cod';
+    const statusClass = statusClassFor(order.status);
     return `<tr>
-      <td><strong>${esc(fmtDate(order.createdAt) || fmtDate(order.timestamp))}</strong><div class="muted">${esc(order.source || '')}</div></td>
-      <td><strong>${esc(order.orderNumber || order.id)}</strong><div class="muted">${esc(order.product || '')}</div></td>
-      <td><strong>${esc(order.name)}</strong><div class="muted">${esc(order.email)}</div></td>
-      <td>${esc(order.phone)}</td>
-      <td><div class="addr">${esc(order.address)}<br>${esc([order.city, order.state, order.pincode].filter(Boolean).join(', '))}</div></td>
-      <td><strong>${esc(order.quantity)}</strong></td>
-      <td><strong>${money(order.amount)}</strong></td>
-      <td>${esc(order.paymentMethod)}</td>
-      <td><span class="pill ${statusClass}">${esc(order.status)}</span></td>
-      <td>${esc(order.paymentId || '')}</td>
+      <td><strong>${esc(formatDate(order.createdAt) || formatDate(order.timestamp) || '-')}</strong><div class="muted">${esc(order.source)}</div></td>
+      <td><strong>${esc(order.orderNumber)}</strong><div class="muted">${esc(order.product)}</div></td>
+      <td><strong>${esc(order.name || '-')}</strong><div class="muted">${esc(order.email)}</div></td>
+      <td>${esc(order.phone || '-')}</td>
+      <td><div class="addr">${esc(composeAddress(order)).replace(/\n/g, '<br>')}</div></td>
+      <td><strong>${esc(order.quantity || '-')}</strong></td>
+      <td><strong>${esc(money(order.amount))}</strong></td>
+      <td>${esc(order.paymentMethod || '-')}<div class="muted">${esc(order.paymentId || '')}</div></td>
+      <td><span class="pill ${statusClass}">${esc(order.status || 'Unknown')}</span></td>
+      <td><button class="btn secondary small" type="button" data-order-id="${esc(order.id)}">View</button></td>
     </tr>`;
   }).join('');
 }
 
-function exportXlsx() {
+function exportOrders() {
+  if (!filteredOrders.length) {
+    showInfo('There are no matching orders to export.');
+    return;
+  }
+
   const rows = filteredOrders.map(order => ({
-    Time: fmtDate(order.createdAt) || fmtDate(order.timestamp),
+    Time: formatDate(order.createdAt) || formatDate(order.timestamp),
     OrderNumber: order.orderNumber || order.id,
     Name: order.name || '',
     Phone: order.phone || '',
@@ -286,28 +407,223 @@ function exportXlsx() {
     City: order.city || '',
     State: order.state || '',
     Pincode: order.pincode || '',
+    FullAddress: composeAddress(order),
     Product: order.product || '',
     Quantity: order.quantity || '',
     Amount: order.amount || '',
     PaymentMethod: order.paymentMethod || '',
     PaymentId: order.paymentId || '',
-    Status: order.status || ''
+    Status: order.status || '',
+    Source: order.source || '',
+    PageUrl: order.pageUrl || '',
+    FirebaseId: order.id || ''
   }));
-  const ws = XLSX.utils.json_to_sheet(rows);
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'Ganga Jal Orders');
-  XLSX.writeFile(wb, `ganga-jal-orders-${new Date().toISOString().slice(0,10)}.xlsx`);
+
+  const filename = 'ganga-jal-orders-' + new Date().toISOString().slice(0,10);
+
+  if (window.XLSX) {
+    const ws = XLSX.utils.json_to_sheet(rows);
+    ws['!cols'] = [
+      {wch:22},{wch:20},{wch:22},{wch:14},{wch:28},{wch:36},{wch:16},{wch:18},{wch:10},
+      {wch:48},{wch:18},{wch:10},{wch:12},{wch:20},{wch:22},{wch:16},{wch:18},{wch:34},{wch:24}
+    ];
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Ganga Jal Orders');
+    XLSX.writeFile(wb, filename + '.xlsx');
+    showInfo('Exported ' + rows.length + ' orders to XLSX.');
+    return;
+  }
+
+  downloadCsv(rows, filename + '.csv');
+  showInfo('XLSX library was not available, so the orders were exported as CSV.');
 }
 
-function esc(value) {
-  return String(value == null ? '' : value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function openDetails(orderId) {
+  activeOrder = allOrders.find(order => order.id === orderId) || null;
+  if (!activeOrder) return;
+
+  el('detailsTitle').textContent = activeOrder.orderNumber || activeOrder.id;
+  el('detailsSubtitle').textContent = (formatDate(activeOrder.createdAt) || formatDate(activeOrder.timestamp) || 'No time') + ' | ' + (activeOrder.status || 'Unknown status');
+
+  const fields = [
+    ['Customer Name', activeOrder.name],
+    ['Phone', activeOrder.phone],
+    ['Email', activeOrder.email],
+    ['Product', activeOrder.product],
+    ['Quantity', activeOrder.quantity],
+    ['Amount', money(activeOrder.amount)],
+    ['Payment Method', activeOrder.paymentMethod],
+    ['Payment ID', activeOrder.paymentId],
+    ['Status', activeOrder.status],
+    ['Source', activeOrder.source],
+    ['Firebase ID', activeOrder.id],
+    ['Created Time', formatDate(activeOrder.createdAt) || formatDate(activeOrder.timestamp)],
+    ['Delivery Address', composeAddress(activeOrder), 'full'],
+    ['Page URL', activeOrder.pageUrl, 'full'],
+    ['User Agent', activeOrder.userAgent, 'full']
+  ];
+
+  el('detailsGrid').innerHTML = fields.map(([key, value, wide]) => (
+    `<div class="detail ${wide === 'full' ? 'full' : ''}"><div class="k">${esc(key)}</div><div class="v">${esc(value || '-')}</div></div>`
+  )).join('');
+
+  el('rawJson').textContent = JSON.stringify(exportableOrder(activeOrder), null, 2);
+  el('detailsModal').setAttribute('aria-hidden', 'false');
+  document.body.classList.add('modal-open');
 }
+
+function closeDetails() {
+  el('detailsModal').setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('modal-open');
+}
+
+function clearFilters() {
+  ['searchInput','statusFilter','paymentFilter','fromDate','toDate'].forEach(id => el(id).value = '');
+  render();
+}
+
+function composeAddress(order) {
+  const line2 = [order.city, order.state, order.pincode].filter(Boolean).join(', ');
+  return [order.address, line2].filter(Boolean).join('\n');
+}
+
+function formatDate(value) {
+  const date = plainDate(value);
+  return date ? date.toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }) : '';
+}
+
+function plainDate(value) {
+  if (!value) return null;
+  const date = value.toDate ? value.toDate() : new Date(value);
+  return date && !Number.isNaN(date.getTime()) ? date : null;
+}
+
+function statusClassFor(status) {
+  if (status === 'Paid') return 'paid';
+  if (status === 'COD - Pending') return 'cod';
+  return 'other';
+}
+
+function exportableOrder(order) {
+  return {
+    firebaseId: order.id,
+    orderNumber: order.orderNumber,
+    createdAt: formatDate(order.createdAt) || formatDate(order.timestamp),
+    name: order.name,
+    phone: order.phone,
+    email: order.email,
+    address: order.address,
+    city: order.city,
+    state: order.state,
+    pincode: order.pincode,
+    product: order.product,
+    quantity: order.quantity,
+    amount: order.amount,
+    paymentMethod: order.paymentMethod,
+    paymentId: order.paymentId,
+    status: order.status,
+    source: order.source,
+    pageUrl: order.pageUrl,
+    userAgent: order.userAgent
+  };
+}
+
+async function copyActiveAddress() {
+  if (!activeOrder) return;
+  await copyText(composeAddress(activeOrder), 'Address copied.');
+}
+
+async function copyActiveJson() {
+  if (!activeOrder) return;
+  await copyText(JSON.stringify(exportableOrder(activeOrder), null, 2), 'Order details copied.');
+}
+
+async function copyText(text, message) {
+  try {
+    await navigator.clipboard.writeText(text);
+    showInfo(message);
+  } catch (error) {
+    showInfo('Copy is not available in this browser. You can select the text manually from the details view.');
+  }
+}
+
+function downloadCsv(rows, filename) {
+  const headers = Object.keys(rows[0]);
+  const csv = [
+    headers.join(','),
+    ...rows.map(row => headers.map(key => csvCell(row[key])).join(','))
+  ].join('\r\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
+function csvCell(value) {
+  return '"' + safe(value).replace(/"/g, '""') + '"';
+}
+
+function setLoginBusy(isBusy) {
+  el('loginBtn').disabled = isBusy;
+  el('loginBtn').textContent = isBusy ? 'Signing in...' : 'Sign in with Google';
+}
+
 function showError(message) {
   el('errorBox').textContent = message;
   el('errorBox').style.display = 'block';
 }
+
 function hideError() {
   el('errorBox').style.display = 'none';
+}
+
+function showInfo(message) {
+  el('infoBox').textContent = message;
+  el('infoBox').style.display = 'block';
+  window.clearTimeout(showInfo.timer);
+  showInfo.timer = window.setTimeout(() => {
+    el('infoBox').style.display = 'none';
+  }, 4000);
+}
+
+function showLoginError(message) {
+  el('loginError').textContent = message;
+  el('loginError').style.display = 'block';
+}
+
+function clearLoginError() {
+  el('loginError').style.display = 'none';
+}
+
+function hideAllMessages() {
+  hideError();
+  clearLoginError();
+  el('infoBox').style.display = 'none';
+}
+
+function authMessage(error) {
+  if (error.code === 'auth/unauthorized-domain') {
+    return 'This domain is not authorized in Firebase Authentication. Add this admin page domain in Firebase Console > Authentication > Settings > Authorized domains.';
+  }
+  if (error.code === 'auth/popup-closed-by-user') {
+    return 'Sign-in was closed before it finished.';
+  }
+  return error.message || 'Could not sign in.';
+}
+
+function firestoreMessage(error) {
+  if (error.code === 'permission-denied') {
+    return 'Permission denied. Make sure you are signed in as info.kumbhsnan@gmail.com and that Firestore rules allow read access for that email.';
+  }
+  if (error.code === 'failed-precondition') {
+    return 'Firestore needs an index or query setup for this view. Open the Firebase console link from the browser console if Firebase shows one.';
+  }
+  return error.message || 'Could not load orders from Firestore.';
 }
 </script>
 </body>
