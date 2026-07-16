@@ -606,23 +606,29 @@ footer{background:var(--dk2);border-top:1px solid var(--gold-bdr);padding:2.6rem
      JAVASCRIPT
 =========================================== -->
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
 <script>
-/* ===== CONFIG — reused from the main kumbh-snan.com site =====
-   NOTE: The Google Sheets URL below is a PLACEHOLDER. The existing
-   Apps Script on the main site is built for puja-booking columns
-   (name, gotra, phone, email, package, country, message...) and
-   will NOT have the right columns for shipping orders (address,
-   city, state, pincode, quantity, payment method). Deploy the
-   companion Apps Script provided separately and paste your new
-   Web App URL below before going live. */
+/* ===== CONFIG ===== */
+const firebaseConfig = {
+  apiKey: "AIzaSyC51Ie-6xeAEFfFuQA9o_g4Pf3BVoUphwY",
+  authDomain: "kumbh-snan.firebaseapp.com",
+  projectId: "kumbh-snan",
+  storageBucket: "kumbh-snan.firebasestorage.app",
+  messagingSenderId: "914255485723",
+  appId: "1:914255485723:web:0a8ffc3de41a0b249b51be",
+  measurementId: "G-G9LHGSRFB7"
+};
+
 const CFG = {
   WA_NUM: '918275872736',
   BUSINESS: 'Kumbh Snan',
   EMAIL: 'info.kumbhsnan@gmail.com',
-  RAZORPAY_KEY: 'rzp_live_SyGiDr3YOJUq7C',
-  GOOGLE_SHEETS_WEB_APP_URL: 'https://script.google.com/macros/s/AKfycbwIfVnok4F-KZDKgbCfLM7VQdZmVC1-UARBQbDVL7B6MJ8fobEw-epRRORkimhSgjzN/exec'
+  RAZORPAY_KEY: 'rzp_live_SyGiDr3YOJUq7C'
 };
 
+firebase.initializeApp(firebaseConfig);
+const firestoreDb = firebase.firestore();
 /* ===== SELECTION STATE ===== */
 let sel = { qty: 1, pay: 'online' };
 const TIERS = { 1: 350, 2: 550, 3: 700 };
@@ -736,7 +742,12 @@ function openRazorpay(data) {
     handler: async function (response) {
       const paymentId = response.razorpay_payment_id || '';
       const order = buildOrderPayload({ ...data, paymentMethod: 'Prepaid - Razorpay', paymentId, status: 'Paid' });
-      await saveOrderToGoogleSheets(order);
+      try {
+        await saveOrderToFirestore(order);
+      } catch (error) {
+        saveOrderBackup(order);
+        console.error('Firestore paid order save failed:', error);
+      }
       showOrderThankYou({ ...data, paymentMethod: 'Prepaid - Razorpay', paymentId });
     },
     modal: { ondismiss: function () { showToast('Payment was cancelled. You can try again when ready.', 'err'); } }
@@ -750,10 +761,11 @@ async function placeCodOrder(data) {
   const order = buildOrderPayload({ ...data, paymentMethod: 'Cash on Delivery', paymentId: 'COD', status: 'COD - Pending' });
 
   try {
-    await saveOrderToGoogleSheets(order);
+    await saveOrderToFirestore(order);
     showOrderThankYou({ ...data, paymentMethod: 'Cash on Delivery', paymentId: 'COD' });
   } catch (error) {
-    console.error('Google Sheets order save failed:', error);
+    saveOrderBackup(order);
+    console.error('Firestore COD order save failed:', error);
     showToast('Could not save your order. Please try again or contact us on WhatsApp.', 'err');
   } finally {
     btn.disabled = false;
@@ -762,6 +774,7 @@ async function placeCodOrder(data) {
 
 function buildOrderPayload(d) {
   return {
+    orderNumber: makeOrderNumber(),
     timestamp: new Date().toISOString(),
     name: sheetSafe(d.name, 120),
     phone: sheetSafe(d.phone, 20),
@@ -775,53 +788,37 @@ function buildOrderPayload(d) {
     paymentMethod: sheetSafe(d.paymentMethod, 60),
     paymentId: sheetSafe(d.paymentId, 120),
     status: sheetSafe(d.status, 40),
-    amount: Number(d.amount) || 0
+    amount: Number(d.amount) || 0,
+    source: 'ganga-jal-website'
   };
 }
 
-async function saveOrderToGoogleSheets(order) {
-  if (!CFG.GOOGLE_SHEETS_WEB_APP_URL) {
-    throw new Error('Google Sheets Web App URL is not configured.');
+async function saveOrderToFirestore(order) {
+  if (!window.firebase || !firestoreDb) {
+    throw new Error('Firebase is not loaded.');
   }
 
-  submitOrderFormToGoogleSheets(order);
-  return { success: true };
+  return firestoreDb.collection('gangaJalOrders').add({
+    ...order,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+    pageUrl: location.href,
+    userAgent: navigator.userAgent
+  });
 }
 
-function submitOrderFormToGoogleSheets(order) {
-  const frameName = 'gangaOrderFrame_' + Date.now();
-  const iframe = document.createElement('iframe');
-  iframe.name = frameName;
-  iframe.style.display = 'none';
+function makeOrderNumber() {
+  return 'GJ-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).slice(2, 6).toUpperCase();
+}
 
-  const form = document.createElement('form');
-  form.method = 'POST';
-  form.action = CFG.GOOGLE_SHEETS_WEB_APP_URL;
-  form.target = frameName;
-  form.style.display = 'none';
-
-  Object.entries(order).forEach(([key, value]) => {
-    const input = document.createElement('input');
-    input.type = 'hidden';
-    input.name = key;
-    input.value = value == null ? '' : String(value);
-    form.appendChild(input);
-  });
-
-  const payloadInput = document.createElement('input');
-  payloadInput.type = 'hidden';
-  payloadInput.name = 'payload';
-  payloadInput.value = JSON.stringify(order);
-  form.appendChild(payloadInput);
-
-  document.body.appendChild(iframe);
-  document.body.appendChild(form);
-  form.submit();
-
-  setTimeout(() => {
-    form.remove();
-    iframe.remove();
-  }, 10000);
+function saveOrderBackup(order) {
+  try {
+    const key = 'gangaJalPendingOrders';
+    const pending = JSON.parse(localStorage.getItem(key) || '[]');
+    pending.push({ ...order, savedAt: new Date().toISOString() });
+    localStorage.setItem(key, JSON.stringify(pending).slice(-120000));
+  } catch (error) {
+    console.error('Local order backup failed:', error);
+  }
 }
 function sheetSafe(value, maxLength) {
   return String(value || '')
