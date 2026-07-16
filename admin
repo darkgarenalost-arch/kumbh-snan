@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Ganga Jal Orders Admin | Kumbh Snan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#C9A84C;--gold-b:#F0C448;--gold-dim:rgba(201,168,76,.12);--gold-bdr:rgba(201,168,76,.28);--dk:#080808;--dk2:#0F0F0F;--dk3:#141414;--dk4:#1C1C1C;--wh:#F8F4EC;--gray:#888880;--gl:#AAAAAA;--green:#5ec26a;--red:#d95f5f;--serif:'Playfair Display',Georgia,serif;--sans:'Inter',system-ui,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:var(--dk);color:var(--wh);font-family:var(--sans);line-height:1.5}
+button,input,select{font:inherit}
+button{cursor:pointer;border:0}
+.top{position:sticky;top:0;z-index:10;background:rgba(8,8,8,.94);backdrop-filter:blur(18px);border-bottom:1px solid var(--gold-bdr)}
+.top-in{display:flex;align-items:center;justify-content:space-between;gap:1rem;max-width:1440px;margin:0 auto;padding:1rem 1.4rem}
+.brand{display:flex;align-items:center;gap:.75rem}
+.mark{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--gold-bdr);background:var(--dk3);color:var(--gold);font-family:var(--serif);font-weight:800}
+.brand h1{font-family:var(--serif);font-size:1.25rem;color:var(--gold)}
+.brand p{color:var(--gray);font-size:.8rem}
+.user{display:flex;align-items:center;gap:.7rem;flex-wrap:wrap;justify-content:flex-end}
+.user span{color:var(--gl);font-size:.86rem}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.45rem;border-radius:8px;padding:.68rem 1rem;font-weight:700;background:linear-gradient(135deg,var(--gold),var(--gold-b));color:var(--dk)}
+.btn.secondary{background:var(--dk3);color:var(--gold);border:1px solid var(--gold-bdr)}
+.btn.danger{background:#351313;color:#ffd9d9;border:1px solid rgba(217,95,95,.35)}
+.wrap{max-width:1440px;margin:0 auto;padding:1.4rem}
+.login{min-height:calc(100vh - 74px);display:grid;place-items:center;padding:2rem}
+.login-box{width:min(460px,100%);background:var(--dk3);border:1px solid var(--gold-bdr);border-radius:10px;padding:2rem;text-align:center;box-shadow:0 16px 50px rgba(0,0,0,.35)}
+.login-box h2{font-family:var(--serif);font-size:1.8rem;color:var(--gold);margin-bottom:.45rem}
+.login-box p{color:var(--gl);margin-bottom:1.4rem}
+.notice{margin-top:1rem;color:var(--gray);font-size:.82rem}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1rem}
+.stat{background:var(--dk3);border:1px solid var(--gold-bdr);border-radius:8px;padding:1rem}
+.stat .lbl{color:var(--gray);font-size:.78rem;text-transform:uppercase;letter-spacing:.08em}
+.stat .val{font-family:var(--serif);font-size:1.9rem;color:var(--gold);margin-top:.2rem}
+.panel{background:var(--dk3);border:1px solid var(--gold-bdr);border-radius:8px;margin-bottom:1rem}
+.panel-head{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1rem;border-bottom:1px solid var(--gold-bdr);flex-wrap:wrap}
+.panel-head h2{font-family:var(--serif);font-size:1.2rem;color:var(--gold)}
+.filters{display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr auto;gap:.7rem;padding:1rem}
+.field{width:100%;background:var(--dk2);border:1px solid var(--gold-bdr);border-radius:8px;color:var(--wh);padding:.72rem .8rem;outline:none}
+.field:focus{border-color:var(--gold)}
+.table-wrap{overflow:auto;max-height:calc(100vh - 350px)}
+table{width:100%;border-collapse:collapse;min-width:1180px}
+th,td{padding:.75rem .85rem;border-bottom:1px solid rgba(201,168,76,.16);text-align:left;vertical-align:top;font-size:.86rem}
+th{position:sticky;top:0;background:#171717;color:var(--gold);font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;z-index:1}
+td{color:var(--gl)}
+td strong{color:var(--wh)}
+.pill{display:inline-flex;border-radius:999px;padding:.22rem .55rem;font-size:.74rem;font-weight:700;border:1px solid var(--gold-bdr);color:var(--gold);background:var(--gold-dim);white-space:nowrap}
+.pill.paid{color:#a7edb1;border-color:rgba(94,194,106,.35);background:rgba(94,194,106,.1)}
+.pill.cod{color:#ffe0a3;border-color:rgba(240,196,72,.35);background:rgba(240,196,72,.08)}
+.muted{color:var(--gray);font-size:.8rem}
+.addr{max-width:260px;color:var(--gl)}
+.empty{padding:3rem 1rem;text-align:center;color:var(--gray)}
+.error{background:#351313;border:1px solid rgba(217,95,95,.4);color:#ffd9d9;padding:.9rem 1rem;border-radius:8px;margin-bottom:1rem;display:none}
+@media(max-width:980px){.grid{grid-template-columns:repeat(2,1fr)}.filters{grid-template-columns:1fr 1fr}.top-in{align-items:flex-start;flex-direction:column}.user{justify-content:flex-start}}
+@media(max-width:560px){.grid,.filters{grid-template-columns:1fr}.wrap{padding:1rem}.stat .val{font-size:1.5rem}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="top-in">
+    <div class="brand">
+      <div class="mark">GJ</div>
+      <div>
+        <h1>Ganga Jal Orders</h1>
+        <p>Firestore admin dashboard</p>
+      </div>
+    </div>
+    <div class="user" id="userBox" style="display:none">
+      <span id="userEmail"></span>
+      <button class="btn secondary" id="refreshBtn">Refresh</button>
+      <button class="btn" id="exportBtn">Export XLSX</button>
+      <button class="btn danger" id="logoutBtn">Logout</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="login" id="loginView">
+    <div class="login-box">
+      <h2>Admin Login</h2>
+      <p>Sign in with the Google account allowed in your Firestore security rules.</p>
+      <button class="btn" id="loginBtn">Sign in with Google</button>
+      <div class="notice">No customer login is used on the public website.</div>
+    </div>
+  </section>
+
+  <section class="wrap" id="dashboardView" style="display:none">
+    <div class="error" id="errorBox"></div>
+    <div class="grid">
+      <div class="stat"><div class="lbl">Total Orders</div><div class="val" id="totalOrders">0</div></div>
+      <div class="stat"><div class="lbl">Total Revenue</div><div class="val" id="totalRevenue">Rs. 0</div></div>
+      <div class="stat"><div class="lbl">COD Orders</div><div class="val" id="codOrders">0</div></div>
+      <div class="stat"><div class="lbl">Prepaid Orders</div><div class="val" id="paidOrders">0</div></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <h2>Orders</h2>
+        <div class="muted" id="lastUpdated">Waiting for data...</div>
+      </div>
+      <div class="filters">
+        <input class="field" id="searchInput" placeholder="Search name, phone, city, payment ID">
+        <select class="field" id="statusFilter">
+          <option value="">All statuses</option>
+          <option value="Paid">Paid</option>
+          <option value="COD - Pending">COD - Pending</option>
+        </select>
+        <select class="field" id="paymentFilter">
+          <option value="">All payments</option>
+          <option value="Cash on Delivery">Cash on Delivery</option>
+          <option value="Prepaid - Razorpay">Prepaid - Razorpay</option>
+        </select>
+        <input class="field" id="fromDate" type="date">
+        <input class="field" id="toDate" type="date">
+        <button class="btn secondary" id="clearBtn">Clear</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Time</th><th>Order</th><th>Customer</th><th>Contact</th><th>Address</th>
+              <th>Qty</th><th>Amount</th><th>Payment</th><th>Status</th><th>Payment ID</th>
+            </tr>
+          </thead>
+          <tbody id="ordersBody"></tbody>
+        </table>
+        <div class="empty" id="emptyState">No orders to show.</div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyC51Ie-6xeAEFfFuQA9o_g4Pf3BVoUphwY",
+  authDomain: "kumbh-snan.firebaseapp.com",
+  projectId: "kumbh-snan",
+  storageBucket: "kumbh-snan.firebasestorage.app",
+  messagingSenderId: "914255485723",
+  appId: "1:914255485723:web:0a8ffc3de41a0b249b51be",
+  measurementId: "G-G9LHGSRFB7"
+};
+
+const ADMIN_EMAILS = ['info.kumbhsnan@gmail.com'];
+const COLLECTION = 'gangaJalOrders';
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+let allOrders = [];
+let filteredOrders = [];
+let unsubscribe = null;
+
+const el = id => document.getElementById(id);
+const money = n => 'Rs. ' + Number(n || 0).toLocaleString('en-IN');
+const fmtDate = value => {
+  const date = value?.toDate ? value.toDate() : value ? new Date(value) : null;
+  return date && !Number.isNaN(date.getTime()) ? date.toLocaleString('en-IN') : '';
+};
+const plainDate = value => {
+  const date = value?.toDate ? value.toDate() : value ? new Date(value) : null;
+  return date && !Number.isNaN(date.getTime()) ? date : null;
+};
+
+auth.onAuthStateChanged(user => {
+  if (!user) {
+    showLogin();
+    return;
+  }
+  if (ADMIN_EMAILS.length && !ADMIN_EMAILS.includes(user.email)) {
+    showError('This Google account is not in ADMIN_EMAILS. Add it in this file and in Firestore rules.');
+    auth.signOut();
+    return;
+  }
+  showDashboard(user);
+});
+
+el('loginBtn').addEventListener('click', async () => {
+  try {
+    await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
+  } catch (error) {
+    showError(error.message);
+  }
+});
+el('logoutBtn').addEventListener('click', () => auth.signOut());
+el('refreshBtn').addEventListener('click', () => render());
+el('exportBtn').addEventListener('click', exportXlsx);
+['searchInput','statusFilter','paymentFilter','fromDate','toDate'].forEach(id => el(id).addEventListener('input', render));
+el('clearBtn').addEventListener('click', () => {
+  ['searchInput','statusFilter','paymentFilter','fromDate','toDate'].forEach(id => el(id).value = '');
+  render();
+});
+
+function showLogin() {
+  if (unsubscribe) unsubscribe();
+  unsubscribe = null;
+  el('loginView').style.display = 'grid';
+  el('dashboardView').style.display = 'none';
+  el('userBox').style.display = 'none';
+}
+
+function showDashboard(user) {
+  el('loginView').style.display = 'none';
+  el('dashboardView').style.display = 'block';
+  el('userBox').style.display = 'flex';
+  el('userEmail').textContent = user.email;
+  listenToOrders();
+}
+
+function listenToOrders() {
+  if (unsubscribe) unsubscribe();
+  unsubscribe = db.collection(COLLECTION).orderBy('createdAt', 'desc').limit(1000)
+    .onSnapshot(snapshot => {
+      allOrders = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      el('lastUpdated').textContent = 'Updated ' + new Date().toLocaleString('en-IN');
+      hideError();
+      render();
+    }, error => {
+      showError(error.message);
+    });
+}
+
+function render() {
+  const q = el('searchInput').value.trim().toLowerCase();
+  const status = el('statusFilter').value;
+  const payment = el('paymentFilter').value;
+  const from = el('fromDate').value ? new Date(el('fromDate').value + 'T00:00:00') : null;
+  const to = el('toDate').value ? new Date(el('toDate').value + 'T23:59:59') : null;
+
+  filteredOrders = allOrders.filter(order => {
+    const text = [order.orderNumber, order.name, order.phone, order.email, order.city, order.state, order.pincode, order.paymentId].join(' ').toLowerCase();
+    const date = plainDate(order.createdAt) || plainDate(order.timestamp);
+    if (q && !text.includes(q)) return false;
+    if (status && order.status !== status) return false;
+    if (payment && order.paymentMethod !== payment) return false;
+    if (from && date && date < from) return false;
+    if (to && date && date > to) return false;
+    return true;
+  });
+
+  updateStats(filteredOrders);
+  drawTable(filteredOrders);
+}
+
+function updateStats(orders) {
+  el('totalOrders').textContent = orders.length;
+  el('totalRevenue').textContent = money(orders.reduce((sum, o) => sum + Number(o.amount || 0), 0));
+  el('codOrders').textContent = orders.filter(o => o.paymentMethod === 'Cash on Delivery').length;
+  el('paidOrders').textContent = orders.filter(o => o.paymentMethod === 'Prepaid - Razorpay').length;
+}
+
+function drawTable(orders) {
+  el('emptyState').style.display = orders.length ? 'none' : 'block';
+  el('ordersBody').innerHTML = orders.map(order => {
+    const statusClass = order.status === 'Paid' ? 'paid' : 'cod';
+    return `<tr>
+      <td><strong>${esc(fmtDate(order.createdAt) || fmtDate(order.timestamp))}</strong><div class="muted">${esc(order.source || '')}</div></td>
+      <td><strong>${esc(order.orderNumber || order.id)}</strong><div class="muted">${esc(order.product || '')}</div></td>
+      <td><strong>${esc(order.name)}</strong><div class="muted">${esc(order.email)}</div></td>
+      <td>${esc(order.phone)}</td>
+      <td><div class="addr">${esc(order.address)}<br>${esc([order.city, order.state, order.pincode].filter(Boolean).join(', '))}</div></td>
+      <td><strong>${esc(order.quantity)}</strong></td>
+      <td><strong>${money(order.amount)}</strong></td>
+      <td>${esc(order.paymentMethod)}</td>
+      <td><span class="pill ${statusClass}">${esc(order.status)}</span></td>
+      <td>${esc(order.paymentId || '')}</td>
+    </tr>`;
+  }).join('');
+}
+
+function exportXlsx() {
+  const rows = filteredOrders.map(order => ({
+    Time: fmtDate(order.createdAt) || fmtDate(order.timestamp),
+    OrderNumber: order.orderNumber || order.id,
+    Name: order.name || '',
+    Phone: order.phone || '',
+    Email: order.email || '',
+    Address: order.address || '',
+    City: order.city || '',
+    State: order.state || '',
+    Pincode: order.pincode || '',
+    Product: order.product || '',
+    Quantity: order.quantity || '',
+    Amount: order.amount || '',
+    PaymentMethod: order.paymentMethod || '',
+    PaymentId: order.paymentId || '',
+    Status: order.status || ''
+  }));
+  const ws = XLSX.utils.json_to_sheet(rows);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Ganga Jal Orders');
+  XLSX.writeFile(wb, `ganga-jal-orders-${new Date().toISOString().slice(0,10)}.xlsx`);
+}
+
+function esc(value) {
+  return String(value == null ? '' : value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function showError(message) {
+  el('errorBox').textContent = message;
+  el('errorBox').style.display = 'block';
+}
+function hideError() {
+  el('errorBox').style.display = 'none';
+}
+</script>
+</body>
+</html>
