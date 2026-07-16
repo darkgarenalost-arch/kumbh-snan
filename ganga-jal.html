@@ -269,7 +269,7 @@ footer{background:var(--dk2);border-top:1px solid var(--gold-bdr);padding:2.6rem
 <!-- ===== TOP BAR: scarcity strip + nav (grouped so nav never overlaps it) ===== -->
 <div id="topBar">
   <div class="scar-bar" id="scarBar">
-    🔥 Fresh batch collected — only <strong id="stockLeft">98 bottles</strong> left this cycle —
+    🔥 Fresh batch collected — only <strong id="stockLeft">38 bottles</strong> left this cycle —
     <span style="color:var(--gold-b);cursor:pointer;text-decoration:underline" onclick="scrollToBuy()">Order now →</span>
   </div>
   <nav id="navbar">
@@ -734,9 +734,9 @@ function openRazorpay(data) {
     theme: { color: '#C9A84C' },
     handler: async function (response) {
       const paymentId = response.razorpay_payment_id || '';
-      const payload = buildOrderPayload({ ...data, paymentMethod: 'Online (Razorpay)', paymentId, status: 'Paid' });
-      try { await saveOrderToGoogleSheets(payload); } catch (error) { console.error('Google Sheets order save failed:', error); }
-      showOrderThankYou({ ...data, paymentMethod: 'Online (Razorpay)', paymentId });
+      const order = buildOrderPayload({ ...data, paymentMethod: 'Prepaid - Razorpay', paymentId, status: 'Paid' });
+      await saveOrderToGoogleSheets(order);
+      showOrderThankYou({ ...data, paymentMethod: 'Prepaid - Razorpay', paymentId });
     },
     modal: { ondismiss: function () { showToast('Payment was cancelled. You can try again when ready.', 'err'); } }
   });
@@ -746,19 +746,20 @@ function openRazorpay(data) {
 async function placeCodOrder(data) {
   const btn = document.getElementById('buyBtn');
   btn.disabled = true;
-  const payload = buildOrderPayload({ ...data, paymentMethod: 'Cash on Delivery', paymentId: 'COD', status: 'COD - Pending' });
+  const order = buildOrderPayload({ ...data, paymentMethod: 'Cash on Delivery', paymentId: 'COD', status: 'COD - Pending' });
+
   try {
-    await saveOrderToGoogleSheets(payload);
+    await saveOrderToGoogleSheets(order);
+    showOrderThankYou({ ...data, paymentMethod: 'Cash on Delivery', paymentId: 'COD' });
   } catch (error) {
     console.error('Google Sheets order save failed:', error);
+    showToast('Could not save your order. Please try again or contact us on WhatsApp.', 'err');
   } finally {
     btn.disabled = false;
   }
-  showOrderThankYou({ ...data, paymentMethod: 'Cash on Delivery', paymentId: 'COD' });
 }
 
 function buildOrderPayload(d) {
-  // Builds the row data expected by the Ganga Jal Google Apps Script backend.
   return {
     timestamp: new Date().toISOString(),
     name: sheetSafe(d.name, 120),
@@ -769,33 +770,57 @@ function buildOrderPayload(d) {
     state: sheetSafe(d.state, 100),
     pincode: sheetSafe(d.pin, 10),
     product: 'Ganga Jal 500ml',
-    quantity: d.qty,
-    paymentMethod: sheetSafe(d.paymentMethod, 40),
+    quantity: Number(d.qty) || 1,
+    paymentMethod: sheetSafe(d.paymentMethod, 60),
     paymentId: sheetSafe(d.paymentId, 120),
     status: sheetSafe(d.status, 40),
-    amount: d.amount
+    amount: Number(d.amount) || 0
   };
 }
 
-async function saveOrderToGoogleSheets(payload) {
-  // Same Google Sheets save pattern as the working Kumbh Snan website.
+async function saveOrderToGoogleSheets(order) {
   if (!CFG.GOOGLE_SHEETS_WEB_APP_URL) {
     throw new Error('Google Sheets Web App URL is not configured.');
   }
 
-  const res = await fetch(CFG.GOOGLE_SHEETS_WEB_APP_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-    body: JSON.stringify(payload)
+  submitOrderFormToGoogleSheets(order);
+  return { success: true };
+}
+
+function submitOrderFormToGoogleSheets(order) {
+  const frameName = 'gangaOrderFrame_' + Date.now();
+  const iframe = document.createElement('iframe');
+  iframe.name = frameName;
+  iframe.style.display = 'none';
+
+  const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = CFG.GOOGLE_SHEETS_WEB_APP_URL;
+  form.target = frameName;
+  form.style.display = 'none';
+
+  Object.entries(order).forEach(([key, value]) => {
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = key;
+    input.value = value == null ? '' : String(value);
+    form.appendChild(input);
   });
 
-  const data = await res.json().catch(() => null);
+  const payloadInput = document.createElement('input');
+  payloadInput.type = 'hidden';
+  payloadInput.name = 'payload';
+  payloadInput.value = JSON.stringify(order);
+  form.appendChild(payloadInput);
 
-  if (!res.ok || !data || data.success !== true) {
-    throw new Error(data?.error || `Google Sheets request failed with status ${res.status}`);
-  }
+  document.body.appendChild(iframe);
+  document.body.appendChild(form);
+  form.submit();
 
-  return data;
+  setTimeout(() => {
+    form.remove();
+    iframe.remove();
+  }, 10000);
 }
 function sheetSafe(value, maxLength) {
   return String(value || '')
