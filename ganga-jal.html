@@ -781,16 +781,25 @@ async function saveOrderToGoogleSheets(payload) {
   if (!CFG.GOOGLE_SHEETS_WEB_APP_URL || CFG.GOOGLE_SHEETS_WEB_APP_URL.includes('PASTE_')) {
     throw new Error('Google Sheets Web App URL is not configured yet.');
   }
-  const res = await fetch(CFG.GOOGLE_SHEETS_WEB_APP_URL, {
+
+  const body = JSON.stringify(payload);
+  const request = {
     method: 'POST',
+    mode: 'no-cors',
     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-    body: JSON.stringify(payload)
-  });
-  const data = await res.json().catch(() => null);
-  if (!res.ok || !data || data.success !== true) {
-    throw new Error(data?.error || `Google Sheets request failed with status ${res.status}`);
+    body
+  };
+
+  if (navigator.sendBeacon) {
+    const sent = navigator.sendBeacon(
+      CFG.GOOGLE_SHEETS_WEB_APP_URL,
+      new Blob([body], { type: 'text/plain;charset=utf-8' })
+    );
+    if (sent) return { success: true };
   }
-  return data;
+
+  await fetch(CFG.GOOGLE_SHEETS_WEB_APP_URL, request);
+  return { success: true };
 }
 
 function sheetSafe(value, maxLength) {
