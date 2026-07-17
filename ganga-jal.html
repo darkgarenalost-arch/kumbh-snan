@@ -280,6 +280,41 @@ footer{background:var(--dk2);border-top:1px solid var(--gold-bdr);padding:2.6rem
   .offer-box{padding:1rem}
 }
 </style>
+<!-- Meta Pixel Code -->
+<script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
+
+const META_PIXEL_ID = "689667723047867";
+
+/* Safe wrapper so a blocked/failed Meta Pixel can never break checkout, Firebase, or Razorpay */
+function safeFbqTrack(eventName, params) {
+  try {
+    if (typeof fbq === 'function') {
+      if (params) { fbq('track', eventName, params); } else { fbq('track', eventName); }
+    }
+  } catch (err) {
+    console.error('Meta Pixel tracking error:', err);
+  }
+}
+
+try {
+  fbq('init', META_PIXEL_ID);
+  safeFbqTrack('PageView');
+} catch (err) {
+  console.error('Meta Pixel init error:', err);
+}
+</script>
+<noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=689667723047867&ev=PageView&noscript=1"
+/></noscript>
+<!-- End Meta Pixel Code -->
 </head>
 <body>
 
@@ -735,6 +770,15 @@ function submitOrder() {
   const amount = calcAmount(qty);
   const data = { name, phone, email, address, city, state: stateVal, pin, qty, amount };
 
+  safeFbqTrack('InitiateCheckout', {
+    content_name: 'Ganga Jal 500ml',
+    content_type: 'product',
+    content_ids: ['ganga-jal-500ml'],
+    value: amount,
+    currency: 'INR',
+    num_items: qty
+  });
+
   if (sel.pay === 'online') {
     if (typeof Razorpay === 'undefined') {
       showToast('Payment gateway is loading. Please try again in a moment.', 'err');
@@ -747,6 +791,7 @@ function submitOrder() {
 }
 
 function openRazorpay(data) {
+  let purchaseTracked = false; // ensures Purchase fires exactly once for this checkout attempt
   const rz = new Razorpay({
     key: CFG.RAZORPAY_KEY,
     amount: data.amount * 100,
@@ -765,6 +810,17 @@ function openRazorpay(data) {
         saveOrderBackup(order);
         console.error('Firestore paid order save failed:', error);
       }
+      if (!purchaseTracked) {
+        purchaseTracked = true;
+        safeFbqTrack('Purchase', {
+          value: data.amount,
+          currency: 'INR',
+          content_name: 'Ganga Jal 500ml',
+          content_type: 'product',
+          content_ids: ['ganga-jal-500ml'],
+          num_items: data.qty
+        });
+      }
       showOrderThankYou({ ...data, paymentMethod: 'Prepaid - Razorpay', paymentId });
     },
     modal: { ondismiss: function () { showToast('Payment was cancelled. You can try again when ready.', 'err'); } }
@@ -779,6 +835,14 @@ async function placeCodOrder(data) {
 
   try {
     await saveOrderToFirestore(order);
+    safeFbqTrack('Purchase', {
+      value: data.amount,
+      currency: 'INR',
+      content_name: 'Ganga Jal 500ml',
+      content_type: 'product',
+      content_ids: ['ganga-jal-500ml'],
+      num_items: data.qty
+    });
     showOrderThankYou({ ...data, paymentMethod: 'Cash on Delivery', paymentId: 'COD' });
   } catch (error) {
     saveOrderBackup(order);
@@ -902,6 +966,18 @@ setInterval(() => {
 document.addEventListener('DOMContentLoaded', () => {
   selectQty(1);
   selectPay('online');
+});
+
+/* ===== META PIXEL: VIEW CONTENT (fires once on product page load) ===== */
+document.addEventListener('DOMContentLoaded', () => {
+  const currentProductPrice = calcAmount(sel.qty);
+  safeFbqTrack('ViewContent', {
+    content_name: 'Ganga Jal 500ml',
+    content_type: 'product',
+    content_ids: ['ganga-jal-500ml'],
+    value: currentProductPrice,
+    currency: 'INR'
+  });
 });
 </script>
 </body>
