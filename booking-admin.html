@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Kumbh Snan Bookings Admin | Kumbh Snan</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#C9A84C;--gold-b:#F0C448;--gold-dim:rgba(201,168,76,.12);--gold-bdr:rgba(201,168,76,.28);--dk:#080808;--dk2:#0F0F0F;--dk3:#141414;--dk4:#1C1C1C;--wh:#F8F4EC;--gray:#888880;--gl:#AAAAAA;--green:#5ec26a;--red:#d95f5f;--serif:'Playfair Display',Georgia,serif;--sans:'Inter',system-ui,sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+html{color-scheme:dark}
+body{min-height:100vh;background:var(--dk);color:var(--wh);font-family:var(--sans);line-height:1.5}
+body.modal-open{overflow:hidden}
+button,input,select{font:inherit}
+button{cursor:pointer;border:0}
+button:disabled{cursor:not-allowed;opacity:.62}
+.top{position:sticky;top:0;z-index:20;background:rgba(8,8,8,.94);backdrop-filter:blur(18px);border-bottom:1px solid var(--gold-bdr)}
+.top-in{display:flex;align-items:center;justify-content:space-between;gap:1rem;max-width:1440px;margin:0 auto;padding:1rem 1.4rem}
+.brand{display:flex;align-items:center;gap:.75rem}
+.mark{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--gold-bdr);background:var(--dk3);color:var(--gold);font-family:var(--serif);font-weight:800}
+.brand h1{font-family:var(--serif);font-size:1.25rem;color:var(--gold)}
+.brand p{color:var(--gray);font-size:.8rem}
+.user{display:flex;align-items:center;gap:.7rem;flex-wrap:wrap;justify-content:flex-end}
+.user span{color:var(--gl);font-size:.86rem}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.45rem;border-radius:8px;padding:.68rem 1rem;font-weight:700;background:linear-gradient(135deg,var(--gold),var(--gold-b));color:var(--dk);min-height:42px}
+.btn.secondary{background:var(--dk3);color:var(--gold);border:1px solid var(--gold-bdr)}
+.btn.danger{background:#351313;color:#ffd9d9;border:1px solid rgba(217,95,95,.35)}
+.btn.small{padding:.48rem .72rem;min-height:34px;font-size:.8rem}
+.wrap{max-width:1440px;margin:0 auto;padding:1.4rem}
+.login{min-height:calc(100vh - 74px);display:grid;place-items:center;padding:2rem}
+.login-box{width:min(480px,100%);background:var(--dk3);border:1px solid var(--gold-bdr);border-radius:10px;padding:2rem;text-align:center;box-shadow:0 16px 50px rgba(0,0,0,.35)}
+.login-box h2{font-family:var(--serif);font-size:1.8rem;color:var(--gold);margin-bottom:.45rem}
+.login-box p{color:var(--gl);margin-bottom:1.4rem}
+.notice{margin-top:1rem;color:var(--gray);font-size:.82rem}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1rem}
+.stat{background:var(--dk3);border:1px solid var(--gold-bdr);border-radius:8px;padding:1rem}
+.stat .lbl{color:var(--gray);font-size:.78rem;text-transform:uppercase;letter-spacing:.08em}
+.stat .val{font-family:var(--serif);font-size:1.9rem;color:var(--gold);margin-top:.2rem}
+.panel{background:var(--dk3);border:1px solid var(--gold-bdr);border-radius:8px;margin-bottom:1rem}
+.panel-head{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1rem;border-bottom:1px solid var(--gold-bdr);flex-wrap:wrap}
+.panel-head h2{font-family:var(--serif);font-size:1.2rem;color:var(--gold)}
+.filters{display:grid;grid-template-columns:minmax(220px,2fr) 1fr 1fr 1fr 1fr auto;gap:.7rem;padding:1rem}
+.field{width:100%;background:var(--dk2);border:1px solid var(--gold-bdr);border-radius:8px;color:var(--wh);padding:.72rem .8rem;outline:none;min-height:42px}
+.field:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,.1)}
+.table-wrap{overflow:auto;max-height:calc(100vh - 350px)}
+table{width:100%;border-collapse:collapse;min-width:1260px}
+th,td{padding:.75rem .85rem;border-bottom:1px solid rgba(201,168,76,.16);text-align:left;vertical-align:top;font-size:.86rem}
+th{position:sticky;top:0;background:#171717;color:var(--gold);font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;z-index:1}
+td{color:var(--gl)}
+td strong{color:var(--wh)}
+.pill{display:inline-flex;border-radius:999px;padding:.22rem .55rem;font-size:.74rem;font-weight:700;border:1px solid var(--gold-bdr);color:var(--gold);background:var(--gold-dim);white-space:nowrap}
+.pill.paid{color:#a7edb1;border-color:rgba(94,194,106,.35);background:rgba(94,194,106,.1)}
+.pill.cod{color:#ffe0a3;border-color:rgba(240,196,72,.35);background:rgba(240,196,72,.08)}
+.pill.other{color:#cfd8ff;border-color:rgba(150,170,255,.35);background:rgba(150,170,255,.08)}
+.muted{color:var(--gray);font-size:.8rem}
+.addr{max-width:280px;color:var(--gl);white-space:normal}
+.empty{padding:3rem 1rem;text-align:center;color:var(--gray)}
+.message{border-radius:8px;margin-bottom:1rem;padding:.9rem 1rem;display:none}
+.message.error{background:#351313;border:1px solid rgba(217,95,95,.4);color:#ffd9d9}
+.message.ok{background:#12351b;border:1px solid rgba(94,194,106,.4);color:#d8ffdf}
+.login .message{margin-top:1rem;margin-bottom:0;text-align:left}
+.modal{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;padding:1rem;background:rgba(0,0,0,.72)}
+.modal[aria-hidden=false]{display:flex}
+.modal-card{width:min(900px,100%);max-height:90vh;overflow:auto;background:var(--dk3);border:1px solid var(--gold-bdr);border-radius:10px;box-shadow:0 24px 80px rgba(0,0,0,.55)}
+.modal-head{position:sticky;top:0;background:rgba(20,20,20,.96);backdrop-filter:blur(12px);display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;padding:1rem;border-bottom:1px solid var(--gold-bdr)}
+.modal-head h3{font-family:var(--serif);color:var(--gold);font-size:1.2rem}
+.modal-body{padding:1rem}
+.detail-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:.75rem}
+.detail{background:var(--dk2);border:1px solid rgba(201,168,76,.16);border-radius:8px;padding:.8rem}
+.detail.full{grid-column:1 / -1}
+.detail .k{color:var(--gray);font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;margin-bottom:.28rem}
+.detail .v{color:var(--wh);word-break:break-word;white-space:pre-wrap}
+.modal-actions{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:1rem}
+.raw{margin-top:1rem;background:#0b0b0b;border:1px solid rgba(201,168,76,.16);border-radius:8px;color:#d8d8d8;padding:1rem;white-space:pre-wrap;word-break:break-word;font:12px/1.5 Consolas,monospace}
+@media(max-width:980px){.grid{grid-template-columns:repeat(2,1fr)}.filters{grid-template-columns:1fr 1fr}.top-in{align-items:flex-start;flex-direction:column}.user{justify-content:flex-start}.table-wrap{max-height:none}}
+@media(max-width:620px){.grid,.filters,.detail-grid{grid-template-columns:1fr}.wrap{padding:1rem}.stat .val{font-size:1.5rem}.top-in{padding:1rem}.user .btn{width:100%}.user{width:100%}.login{padding:1rem}.login-box{padding:1.4rem}.modal-head{align-items:stretch;flex-direction:column}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="top-in">
+    <div class="brand">
+      <div class="mark">KS</div>
+      <div>
+        <h1>Kumbh Snan Bookings</h1>
+        <p>Firebase admin dashboard</p>
+      </div>
+    </div>
+    <div class="user" id="userBox" style="display:none">
+      <span id="userEmail"></span>
+      <button class="btn secondary" id="refreshBtn" type="button">Refresh</button>
+      <button class="btn" id="exportBtn" type="button">Export XLSX</button>
+      <a class="btn secondary" href="admin.html">Ganga Jal Orders</a>
+      <button class="btn danger" id="logoutBtn" type="button">Logout</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="login" id="loginView">
+    <div class="login-box">
+      <h2>Admin Login</h2>
+      <p>Sign in with the Google account allowed in your Firestore security rules.</p>
+      <button class="btn" id="loginBtn" type="button">Sign in with Google</button>
+      <div class="notice">Allowed admin: <strong></strong></div>
+      <div class="message error" id="loginError"></div>
+    </div>
+  </section>
+
+  <section class="wrap" id="dashboardView" style="display:none">
+    <div class="message error" id="errorBox"></div>
+    <div class="message ok" id="infoBox"></div>
+
+    <div class="grid">
+      <div class="stat"><div class="lbl">Showing Bookings</div><div class="val" id="totalOrders">0</div></div>
+      <div class="stat"><div class="lbl">Showing Revenue</div><div class="val" id="totalRevenue">Rs. 0</div></div>
+      <div class="stat"><div class="lbl">Vyaktigat (Personal)</div><div class="val" id="codOrders">0</div></div>
+      <div class="stat"><div class="lbl">Parivar / Sampoorna</div><div class="val" id="paidOrders">0</div></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        <h2>Bookings</h2>
+        <div class="muted" id="lastUpdated">Connecting to Firestore...</div>
+      </div>
+      <div class="filters">
+        <input class="field" id="searchInput" placeholder="Search booking, name, phone, email, gotra, payment ID">
+        <select class="field" id="statusFilter">
+          <option value="">All statuses</option>
+          <option value="Paid">Paid</option>
+        </select>
+        <select class="field" id="paymentFilter">
+          <option value="">All packages</option>
+          <option value="Vyaktigat">Vyaktigat (Personal)</option>
+          <option value="Parivar">Parivar (Family)</option>
+          <option value="Sampoorna">Sampoorna (Complete)</option>
+        </select>
+        <input class="field" id="fromDate" type="date" aria-label="From date">
+        <input class="field" id="toDate" type="date" aria-label="To date">
+        <button class="btn secondary" id="clearBtn" type="button">Clear</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Time</th><th>Booking</th><th>Customer</th><th>Contact</th><th>Package</th>
+              <th>Gotra / Country</th><th>Amount</th><th>Payment ID</th><th>Status</th><th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="ordersBody"></tbody>
+        </table>
+        <div class="empty" id="emptyState">No bookings to show.</div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="modal" id="detailsModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="detailsTitle">
+  <div class="modal-card">
+    <div class="modal-head">
+      <div>
+        <h3 id="detailsTitle">Booking Details</h3>
+        <div class="muted" id="detailsSubtitle"></div>
+      </div>
+      <button class="btn secondary small" id="closeDetailsBtn" type="button">Close</button>
+    </div>
+    <div class="modal-body">
+      <div class="detail-grid" id="detailsGrid"></div>
+      <div class="modal-actions">
+        <button class="btn secondary" id="copyContactBtn" type="button">Copy Contact</button>
+        <button class="btn secondary" id="copyJsonBtn" type="button">Copy Details</button>
+      </div>
+      <pre class="raw" id="rawJson"></pre>
+    </div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyC51Ie-6xeAEFfFuQA9o_g4Pf3BVoUphwY",
+  authDomain: "kumbh-snan.firebaseapp.com",
+  projectId: "kumbh-snan",
+  storageBucket: "kumbh-snan.firebasestorage.app",
+  messagingSenderId: "914255485723",
+  appId: "1:914255485723:web:51350174f0c5bd219b51be",
+  measurementId: "G-TJQ2W4QSHB"
+};
+
+const ADMIN_EMAILS = ['darkgarenalost@gmail.com'];
+const COLLECTION = 'kumbhSnanBookings';
+const MAX_ORDERS = 2000;
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+let allOrders = [];
+let filteredOrders = [];
+let unsubscribe = null;
+let activeOrder = null;
+
+const el = id => document.getElementById(id);
+const money = value => 'Rs. ' + Number(value || 0).toLocaleString('en-IN');
+const safe = value => String(value == null ? '' : value);
+const esc = value => safe(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const normalizeEmail = value => safe(value).trim().toLowerCase();
+
+const provider = new firebase.auth.GoogleAuthProvider();
+provider.setCustomParameters({ prompt: 'select_account' });
+
+auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(error => showLoginError(error.message));
+auth.getRedirectResult().catch(error => showLoginError(authMessage(error)));
+
+auth.onAuthStateChanged(user => {
+  hideAllMessages();
+  if (!user) {
+    showLogin();
+    return;
+  }
+
+  if (!ADMIN_EMAILS.map(normalizeEmail).includes(normalizeEmail(user.email))) {
+    showLogin();
+    showLoginError('Signed in as ' + safe(user.email) + ', but this email is not an admin. Use darkgarenalost@gmail.com or update ADMIN_EMAILS and Firestore rules.');
+    auth.signOut();
+    return;
+  }
+
+  showDashboard(user);
+});
+
+el('loginBtn').addEventListener('click', signIn);
+el('logoutBtn').addEventListener('click', () => auth.signOut());
+el('refreshBtn').addEventListener('click', listenToOrders);
+el('exportBtn').addEventListener('click', exportOrders);
+el('clearBtn').addEventListener('click', clearFilters);
+el('ordersBody').addEventListener('click', event => {
+  const button = event.target.closest('[data-order-id]');
+  if (!button) return;
+  openDetails(button.dataset.orderId);
+});
+el('closeDetailsBtn').addEventListener('click', closeDetails);
+el('detailsModal').addEventListener('click', event => {
+  if (event.target.id === 'detailsModal') closeDetails();
+});
+el('copyContactBtn').addEventListener('click', copyActiveContact);
+el('copyJsonBtn').addEventListener('click', copyActiveJson);
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape') closeDetails();
+});
+['searchInput','statusFilter','paymentFilter','fromDate','toDate'].forEach(id => {
+  el(id).addEventListener('input', render);
+});
+
+async function signIn() {
+  clearLoginError();
+  setLoginBusy(true);
+  try {
+    await auth.signInWithPopup(provider);
+  } catch (error) {
+    if (['auth/popup-blocked','auth/cancelled-popup-request','auth/operation-not-supported-in-this-environment'].includes(error.code)) {
+      await auth.signInWithRedirect(provider);
+      return;
+    }
+    showLoginError(authMessage(error));
+  } finally {
+    setLoginBusy(false);
+  }
+}
+
+function showLogin() {
+  if (unsubscribe) unsubscribe();
+  unsubscribe = null;
+  allOrders = [];
+  filteredOrders = [];
+  el('loginView').style.display = 'grid';
+  el('dashboardView').style.display = 'none';
+  el('userBox').style.display = 'none';
+}
+
+function showDashboard(user) {
+  el('loginView').style.display = 'none';
+  el('dashboardView').style.display = 'block';
+  el('userBox').style.display = 'flex';
+  el('userEmail').textContent = user.email || 'Admin';
+  listenToOrders();
+}
+
+function listenToOrders() {
+  if (unsubscribe) unsubscribe();
+  el('lastUpdated').textContent = 'Loading latest bookings...';
+  hideError();
+
+  unsubscribe = db.collection(COLLECTION)
+    .orderBy('createdAt', 'desc')
+    .limit(MAX_ORDERS)
+    .onSnapshot(snapshot => {
+      allOrders = snapshot.docs.map(doc => normalizeOrder(doc));
+      el('lastUpdated').textContent = 'Showing ' + allOrders.length + ' latest bookings. Updated ' + new Date().toLocaleString('en-IN');
+      hideError();
+      render();
+    }, error => {
+      showError(firestoreMessage(error));
+      el('lastUpdated').textContent = 'Could not load bookings';
+      allOrders = [];
+      render();
+    });
+}
+
+function normalizeOrder(doc) {
+  const data = doc.data() || {};
+  return {
+    id: doc.id,
+    orderNumber: data.bookingNumber || doc.id,
+    timestamp: data.timestamp || '',
+    createdAt: data.createdAt || null,
+    name: data.name || '',
+    gotra: data.gotra || '',
+    phone: data.phone || '',
+    email: data.email || '',
+    packageName: data.packageName || '',
+    country: data.country || '',
+    message: data.message || '',
+    amount: Number(data.amount || 0),
+    paymentId: data.paymentId || '',
+    status: data.status || '',
+    source: data.source || '',
+    pageUrl: data.pageUrl || '',
+    userAgent: data.userAgent || '',
+    _raw: data
+  };
+}
+
+function packageTier(packageName) {
+  const p = (packageName || '').toLowerCase();
+  if (p.includes('vyaktigat')) return 'Vyaktigat';
+  if (p.includes('parivar')) return 'Parivar';
+  if (p.includes('sampoorna')) return 'Sampoorna';
+  return '';
+}
+
+function render() {
+  const query = el('searchInput').value.trim().toLowerCase();
+  const status = el('statusFilter').value;
+  const tier = el('paymentFilter').value;
+  const from = el('fromDate').value ? new Date(el('fromDate').value + 'T00:00:00') : null;
+  const to = el('toDate').value ? new Date(el('toDate').value + 'T23:59:59') : null;
+
+  filteredOrders = allOrders.filter(order => {
+    const searchText = [
+      order.orderNumber, order.name, order.phone, order.email, order.gotra, order.country,
+      order.packageName, order.paymentId, order.status, order.source, order.message
+    ].join(' ').toLowerCase();
+    const orderDate = plainDate(order.createdAt) || plainDate(order.timestamp);
+
+    if (query && !searchText.includes(query)) return false;
+    if (status && order.status !== status) return false;
+    if (tier && packageTier(order.packageName) !== tier) return false;
+    if (from && (!orderDate || orderDate < from)) return false;
+    if (to && (!orderDate || orderDate > to)) return false;
+    return true;
+  });
+
+  updateStats(filteredOrders);
+  drawTable(filteredOrders);
+}
+
+function updateStats(orders) {
+  el('totalOrders').textContent = orders.length.toLocaleString('en-IN');
+  el('totalRevenue').textContent = money(orders.reduce((sum, order) => sum + Number(order.amount || 0), 0));
+  el('codOrders').textContent = orders.filter(order => packageTier(order.packageName) === 'Vyaktigat').length.toLocaleString('en-IN');
+  el('paidOrders').textContent = orders.filter(order => ['Parivar', 'Sampoorna'].includes(packageTier(order.packageName))).length.toLocaleString('en-IN');
+}
+
+function drawTable(orders) {
+  el('emptyState').style.display = orders.length ? 'none' : 'block';
+  el('ordersBody').innerHTML = orders.map(order => {
+    const statusClass = statusClassFor(order.status);
+    return `<tr>
+      <td><strong>${esc(formatDate(order.createdAt) || formatDate(order.timestamp) || '-')}</strong><div class="muted">${esc(order.source)}</div></td>
+      <td><strong>${esc(order.orderNumber)}</strong></td>
+      <td><strong>${esc(order.name || '-')}</strong><div class="muted">${esc(order.email)}</div></td>
+      <td>${esc(order.phone || '-')}</td>
+      <td>${esc(order.packageName || '-')}</td>
+      <td>${esc(order.gotra || '-')}<div class="muted">${esc(order.country || '')}</div></td>
+      <td><strong>${esc(money(order.amount))}</strong></td>
+      <td>${esc(order.paymentId || '-')}</td>
+      <td><span class="pill ${statusClass}">${esc(order.status || 'Unknown')}</span></td>
+      <td><button class="btn secondary small" type="button" data-order-id="${esc(order.id)}">View</button></td>
+    </tr>`;
+  }).join('');
+}
+
+function exportOrders() {
+  if (!filteredOrders.length) {
+    showInfo('There are no matching bookings to export.');
+    return;
+  }
+
+  const rows = filteredOrders.map(order => ({
+    Time: formatDate(order.createdAt) || formatDate(order.timestamp),
+    BookingNumber: order.orderNumber || order.id,
+    Name: order.name || '',
+    Phone: order.phone || '',
+    Email: order.email || '',
+    Gotra: order.gotra || '',
+    Country: order.country || '',
+    Package: order.packageName || '',
+    Message: order.message || '',
+    Amount: order.amount || '',
+    PaymentId: order.paymentId || '',
+    Status: order.status || '',
+    Source: order.source || '',
+    PageUrl: order.pageUrl || '',
+    FirebaseId: order.id || ''
+  }));
+
+  const filename = 'kumbh-snan-bookings-' + new Date().toISOString().slice(0,10);
+
+  if (window.XLSX) {
+    const ws = XLSX.utils.json_to_sheet(rows);
+    ws['!cols'] = [
+      {wch:22},{wch:22},{wch:22},{wch:14},{wch:28},{wch:16},{wch:16},{wch:30},
+      {wch:40},{wch:12},{wch:22},{wch:16},{wch:18},{wch:34},{wch:24}
+    ];
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Kumbh Snan Bookings');
+    XLSX.writeFile(wb, filename + '.xlsx');
+    showInfo('Exported ' + rows.length + ' bookings to XLSX.');
+    return;
+  }
+
+  downloadCsv(rows, filename + '.csv');
+  showInfo('XLSX library was not available, so the bookings were exported as CSV.');
+}
+
+function openDetails(orderId) {
+  activeOrder = allOrders.find(order => order.id === orderId) || null;
+  if (!activeOrder) return;
+
+  el('detailsTitle').textContent = activeOrder.orderNumber || activeOrder.id;
+  el('detailsSubtitle').textContent = (formatDate(activeOrder.createdAt) || formatDate(activeOrder.timestamp) || 'No time') + ' | ' + (activeOrder.status || 'Unknown status');
+
+  const fields = [
+    ['Customer Name', activeOrder.name],
+    ['Phone', activeOrder.phone],
+    ['Email', activeOrder.email],
+    ['Gotra', activeOrder.gotra],
+    ['Country', activeOrder.country],
+    ['Package', activeOrder.packageName],
+    ['Amount', money(activeOrder.amount)],
+    ['Payment ID', activeOrder.paymentId],
+    ['Status', activeOrder.status],
+    ['Source', activeOrder.source],
+    ['Firebase ID', activeOrder.id],
+    ['Created Time', formatDate(activeOrder.createdAt) || formatDate(activeOrder.timestamp)],
+    ['Special Request / Message', activeOrder.message, 'full'],
+    ['Page URL', activeOrder.pageUrl, 'full'],
+    ['User Agent', activeOrder.userAgent, 'full']
+  ];
+
+  el('detailsGrid').innerHTML = fields.map(([key, value, wide]) => (
+    `<div class="detail ${wide === 'full' ? 'full' : ''}"><div class="k">${esc(key)}</div><div class="v">${esc(value || '-')}</div></div>`
+  )).join('');
+
+  el('rawJson').textContent = JSON.stringify(exportableOrder(activeOrder), null, 2);
+  el('detailsModal').setAttribute('aria-hidden', 'false');
+  document.body.classList.add('modal-open');
+}
+
+function closeDetails() {
+  el('detailsModal').setAttribute('aria-hidden', 'true');
+  document.body.classList.remove('modal-open');
+}
+
+function clearFilters() {
+  ['searchInput','statusFilter','paymentFilter','fromDate','toDate'].forEach(id => el(id).value = '');
+  render();
+}
+
+function composeContact(order) {
+  return [order.name, order.phone, order.email, order.gotra ? ('Gotra: ' + order.gotra) : '', order.country].filter(Boolean).join('\n');
+}
+
+function formatDate(value) {
+  const date = plainDate(value);
+  return date ? date.toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' }) : '';
+}
+
+function plainDate(value) {
+  if (!value) return null;
+  const date = value.toDate ? value.toDate() : new Date(value);
+  return date && !Number.isNaN(date.getTime()) ? date : null;
+}
+
+function statusClassFor(status) {
+  if (status === 'Paid') return 'paid';
+  if (status === 'COD - Pending') return 'cod';
+  return 'other';
+}
+
+function exportableOrder(order) {
+  return {
+    firebaseId: order.id,
+    bookingNumber: order.orderNumber,
+    createdAt: formatDate(order.createdAt) || formatDate(order.timestamp),
+    name: order.name,
+    phone: order.phone,
+    email: order.email,
+    gotra: order.gotra,
+    country: order.country,
+    packageName: order.packageName,
+    message: order.message,
+    amount: order.amount,
+    paymentId: order.paymentId,
+    status: order.status,
+    source: order.source,
+    pageUrl: order.pageUrl,
+    userAgent: order.userAgent
+  };
+}
+
+async function copyActiveContact() {
+  if (!activeOrder) return;
+  await copyText(composeContact(activeOrder), 'Contact info copied.');
+}
+
+async function copyActiveJson() {
+  if (!activeOrder) return;
+  await copyText(JSON.stringify(exportableOrder(activeOrder), null, 2), 'Booking details copied.');
+}
+
+async function copyText(text, message) {
+  try {
+    await navigator.clipboard.writeText(text);
+    showInfo(message);
+  } catch (error) {
+    showInfo('Copy is not available in this browser. You can select the text manually from the details view.');
+  }
+}
+
+function downloadCsv(rows, filename) {
+  const headers = Object.keys(rows[0]);
+  const csv = [
+    headers.join(','),
+    ...rows.map(row => headers.map(key => csvCell(row[key])).join(','))
+  ].join('\r\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
+function csvCell(value) {
+  return '"' + safe(value).replace(/"/g, '""') + '"';
+}
+
+function setLoginBusy(isBusy) {
+  el('loginBtn').disabled = isBusy;
+  el('loginBtn').textContent = isBusy ? 'Signing in...' : 'Sign in with Google';
+}
+
+function showError(message) {
+  el('errorBox').textContent = message;
+  el('errorBox').style.display = 'block';
+}
+
+function hideError() {
+  el('errorBox').style.display = 'none';
+}
+
+function showInfo(message) {
+  el('infoBox').textContent = message;
+  el('infoBox').style.display = 'block';
+  window.clearTimeout(showInfo.timer);
+  showInfo.timer = window.setTimeout(() => {
+    el('infoBox').style.display = 'none';
+  }, 4000);
+}
+
+function showLoginError(message) {
+  el('loginError').textContent = message;
+  el('loginError').style.display = 'block';
+}
+
+function clearLoginError() {
+  el('loginError').style.display = 'none';
+}
+
+function hideAllMessages() {
+  hideError();
+  clearLoginError();
+  el('infoBox').style.display = 'none';
+}
+
+function authMessage(error) {
+  if (error.code === 'auth/unauthorized-domain') {
+    return 'This domain is not authorized in Firebase Authentication. Add this admin page domain in Firebase Console > Authentication > Settings > Authorized domains.';
+  }
+  if (error.code === 'auth/popup-closed-by-user') {
+    return 'Sign-in was closed before it finished.';
+  }
+  return error.message || 'Could not sign in.';
+}
+
+function firestoreMessage(error) {
+  if (error.code === 'permission-denied') {
+    return 'Permission denied. Make sure you are signed in as darkgarenalost@gmail.com and that Firestore rules allow read access for that email.';
+  }
+  if (error.code === 'failed-precondition') {
+    return 'Firestore needs an index or query setup for this view. Open the Firebase console link from the browser console if Firebase shows one.';
+  }
+  return error.message || 'Could not load bookings from Firestore.';
+}
+</script>
+</body>
+</html>
