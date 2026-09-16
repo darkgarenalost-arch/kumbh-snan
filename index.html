@@ -970,15 +970,30 @@ footer{background:var(--dk2);border-top:1px solid var(--gold-bdr);padding:3rem 0
      JAVASCRIPT
 =========================================== -->
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore-compat.js"></script>
 <script>
 const CFG = {
   WA_NUM: '918275872736',
   BUSINESS: 'Kumbh Snan',
   EMAIL: 'info.kumbhsnan@gmail.com',
-  RAZORPAY_KEY: 'rzp_live_SyGiDr3YOJUq7C',
-  GOOGLE_SHEETS_WEB_APP_URL: 'https://script.google.com/macros/s/AKfycbwIfVnok4F-KZDKgbCfLM7VQdZmVC1-UARBQbDVL7B6MJ8fobEw-epRRORkimhSgjzN/exec'
+  RAZORPAY_KEY: 'rzp_live_SyGiDr3YOJUq7C'
 };
 const WA = 'https://wa.me/' + CFG.WA_NUM;
+
+/* ===== FIREBASE ===== */
+const firebaseConfig = {
+  apiKey: "AIzaSyC51Ie-6xeAEFfFuQA9o_g4Pf3BVoUphwY",
+  authDomain: "kumbh-snan.firebaseapp.com",
+  projectId: "kumbh-snan",
+  storageBucket: "kumbh-snan.firebasestorage.app",
+  messagingSenderId: "914255485723",
+  appId: "1:914255485723:web:51350174f0c5bd219b51be",
+  measurementId: "G-TJQ2W4QSHB"
+};
+firebase.initializeApp(firebaseConfig);
+const firestoreDb = firebase.firestore();
+const BOOKINGS_COLLECTION = 'kumbhSnanBookings';
 
 /* ===== LOADER ===== */
 window.addEventListener('load', () => {
@@ -1122,10 +1137,11 @@ function submitBooking() {
 
       try {
         // Save the booking only after Razorpay confirms successful payment.
-        await saveBookingToGoogleSheets(bookingPayload);
+        await saveBookingToFirestore(bookingPayload);
       } catch (error) {
-        // A Sheets failure must not block the paid customer from seeing success.
-        console.error('Google Sheets booking save failed:', error);
+        // A Firestore failure must not block the paid customer from seeing success.
+        saveBookingBackup(bookingPayload);
+        console.error('Firestore booking save failed:', error);
       }
 
       document.getElementById('tyMsg').textContent =
@@ -1151,8 +1167,9 @@ function getPlanAmount(plan) {
 }
 
 function buildBookingPayload(data) {
-  // Builds the exact row data expected by the Google Apps Script backend.
+  // Builds the record saved to Firestore.
   return {
+    bookingNumber: makeBookingNumber(),
     timestamp: new Date().toISOString(),
     name: sheetSafe(data.name, 120),
     gotra: sheetSafe(data.gotra || 'Not provided', 120),
@@ -1163,33 +1180,41 @@ function buildBookingPayload(data) {
     message: sheetSafe(data.msg || 'No special requests.', 1000),
     paymentId: sheetSafe(data.paymentId, 120),
     status: 'Paid',
-    amount: data.amount
+    amount: data.amount,
+    source: 'kumbh-snan-website'
   };
 }
 
-async function saveBookingToGoogleSheets(payload) {
-  // The Apps Script Web App URL is created after deployment and must be pasted into CFG.
-  if (!CFG.GOOGLE_SHEETS_WEB_APP_URL) {
-    throw new Error('Google Sheets Web App URL is not configured.');
+async function saveBookingToFirestore(booking) {
+  if (!window.firebase || !firestoreDb) {
+    throw new Error('Firebase is not loaded.');
   }
 
-  const res = await fetch(CFG.GOOGLE_SHEETS_WEB_APP_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-    body: JSON.stringify(payload)
+  return firestoreDb.collection(BOOKINGS_COLLECTION).add({
+    ...booking,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+    pageUrl: location.href,
+    userAgent: navigator.userAgent
   });
+}
 
-  const data = await res.json().catch(() => null);
+function makeBookingNumber() {
+  return 'KS-' + Date.now().toString(36).toUpperCase() + '-' + Math.random().toString(36).slice(2, 6).toUpperCase();
+}
 
-  if (!res.ok || !data || data.success !== true) {
-    throw new Error(data?.error || `Google Sheets request failed with status ${res.status}`);
+function saveBookingBackup(booking) {
+  try {
+    const key = 'kumbhSnanPendingBookings';
+    const pending = JSON.parse(localStorage.getItem(key) || '[]');
+    pending.push({ ...booking, savedAt: new Date().toISOString() });
+    localStorage.setItem(key, JSON.stringify(pending).slice(-120000));
+  } catch (error) {
+    console.error('Local booking backup failed:', error);
   }
-
-  return data;
 }
 
 function sheetSafe(value, maxLength) {
-  // Strips control characters and angle brackets before sending user input to Sheets.
+  // Strips control characters and angle brackets before saving user input.
   return String(value || '')
     .replace(/[\u0000-\u001F\u007F]/g, ' ')
     .replace(/[<>]/g, '')
