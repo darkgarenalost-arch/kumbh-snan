@@ -242,6 +242,11 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;height:66px;display:flex;al
 .fsub{width:100%;padding:1.05rem;background:linear-gradient(135deg,var(--gold),var(--gold-b));color:var(--dk);font-weight:700;font-size:.97rem;border-radius:50px;transition:transform .2s,box-shadow .2s;letter-spacing:.4px}
 .fsub:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(201,168,76,.4)}
 .fnote{text-align:center;color:var(--gray);font-size:.78rem;margin-top:.9rem}
+.bk-terms{display:flex;align-items:flex-start;gap:.65rem;margin:.4rem 0 1rem;font-size:.88rem;line-height:1.45;color:var(--gl);cursor:pointer;text-align:left}
+.bk-terms input{width:20px;height:20px;margin:.1rem 0 0;flex-shrink:0;accent-color:var(--gold);cursor:pointer}
+.bk-terms a{color:var(--gold-b);text-decoration:underline}
+.fsub:disabled{opacity:.45;cursor:not-allowed;filter:grayscale(.3);pointer-events:none}
+.fsub:disabled:hover{transform:none;box-shadow:none}
 
 /* ===== ABOUT ===== */
 .abt-hero{min-height:40vh;display:flex;align-items:center;background:linear-gradient(135deg,#080808 0%,#1a0f00 50%,#080808 100%);text-align:center;padding-top:66px}
@@ -1257,7 +1262,8 @@ footer{background:var(--dk2);border-top:1px solid var(--gold-bdr);padding:3rem 0
               </div>
               <div class="fg"><label class="fl">Country / City</label><input type="text" class="fi" id="bCountry" placeholder="e.g. London, UK or Mumbai, India"></div>
               <div class="fg"><label class="fl">Special Requests / Message</label><textarea class="ft fi" id="bMsg" placeholder="Names of family members, ancestor prayers, special requests..."></textarea></div>
-              <button class="fsub" onclick="submitBooking()">🕉 Pay Securely with Razorpay<span class="m-arr"> →</span></button>
+              <label class="bk-terms" for="bTerms"><input type="checkbox" id="bTerms" onchange="syncPayBtn()"><span>I agree to all the <a href="/terms-and-conditions.html" target="_blank" rel="noopener">Terms &amp; Conditions</a> of Online Kumbh Snan.</span></label>
+              <button class="fsub" id="payBtn" onclick="submitBooking()" disabled aria-disabled="true">🕉 Pay Securely with Razorpay<span class="m-arr"> →</span></button>
               <p class="fnote">✅ Secure payment powered by Razorpay.</p>
             </div>
           </div>
@@ -1496,13 +1502,13 @@ function bookPlan(planValue) {
 function initParticles() {
   const c = document.getElementById('ptcls');
   if (!c) return;
-  for (let i = 0; i < 40; i++) {
+  for (let i = 0; i < 80; i++) {
     const p = document.createElement('div');
     p.className = 'ptcl';
     p.style.left = (Math.random() * 100) + '%';
     p.style.animationDuration = (10 + Math.random() * 16) + 's';
     p.style.animationDelay = (Math.random() * 14) + 's';
-    const sz = (1.5 + Math.random() * 2) + 'px';
+    const sz = (2.5 + Math.random() * 3) + 'px';
     p.style.width = p.style.height = sz;
     /* softer glow per particle */
     const alpha = (0.35 + Math.random() * 0.35).toFixed(2);
@@ -1537,8 +1543,16 @@ function toggleFaq(btn) {
   if (!isOpen) { btn.classList.add('open'); ans.classList.add('open'); }
 }
 
+function syncPayBtn() {
+  const cb = document.getElementById('bTerms'), btn = document.getElementById('payBtn');
+  if (!cb || !btn) return;
+  btn.disabled = !cb.checked;
+  btn.setAttribute('aria-disabled', String(!cb.checked));
+}
 /* ===== BOOKING FORM -> RAZORPAY ===== */
 function submitBooking() {
+  const terms = document.getElementById('bTerms');
+  if (terms && !terms.checked) { showToast('Please agree to the Terms & Conditions to continue.', 'err'); return; }
   const name    = g('bName');
   const gotra   = g('bGotra');
   const phone   = g('bPhone');
